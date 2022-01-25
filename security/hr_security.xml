@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+    
+        <record id="group_payroll_administrator" model="res.groups">
+            <field name="name">Payroll Administrator</field>
+            <field name="category_id" ref="hr_payroll_nigerian_state.module_category_payroll"/>
+            <field name="implied_ids" eval="[(4, ref('hr_security.group_payroll_user'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+            <field name="comment">run the payroll and be able to pull reports</field>
+        </record>
+        <record id="group_payroll_qaofficer" model="res.groups">
+            <field name="name">Payroll Quality Assurance Officer</field>
+            <field name="category_id" ref="hr_payroll_nigerian_state.module_category_payroll"/>
+            <field name="implied_ids" eval="[(4, ref('hr_security.group_payroll_user'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+            <field name="comment">look at the payroll to ensure all is well</field>
+        </record>
+        <record id="group_payroll_psfinance" model="res.groups">
+            <field name="name">PS Finance</field>
+            <field name="category_id" ref="hr_payroll_nigerian_state.module_category_payroll"/>
+            <field name="implied_ids" eval="[(4, ref('hr_security.group_payroll_user'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+            <field name="comment">authorize or approve the payroll</field>
+        </record>
+        <record id="group_payroll_pshr" model="res.groups">
+            <field name="name">PS Human Resources</field>
+            <field name="category_id" ref="hr_payroll_nigerian_state.module_category_payroll"/>
+            <field name="implied_ids" eval="[(4, ref('hr_security.group_payroll_user'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+            <field name="comment">Grants final approval for all HR processes</field>
+        </record>
+        <record id="group_payroll_governor" model="res.groups">
+            <field name="name">His Excellency</field>
+            <field name="category_id" ref="hr_payroll_nigerian_state.module_category_payroll"/>
+            <field name="implied_ids" eval="[(4, ref('hr_security.group_payroll_user'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+            <field name="comment">Governor; view only access.</field>
+        </record>
+        <record id="group_payroll_hos" model="res.groups">
+            <field name="name">Head of Service</field>
+            <field name="category_id" ref="hr_payroll_nigerian_state.module_category_payroll"/>
+            <field name="implied_ids" eval="[(4, ref('hr_security.group_payroll_user'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+            <field name="comment">View only access. Cannot modify employee records.</field>
+        </record>
+        <record id="group_payroll_officer" model="res.groups">
+            <field name="name">Payroll Officer</field>
+            <field name="category_id" ref="hr_payroll_nigerian_state.module_category_payroll"/>
+            <field name="implied_ids" eval="[(4, ref('hr_security.group_payroll_user'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+            <field name="comment">close payroll and parameterize the payment according to the scenario agreed.</field>
+        </record>
+        <record id="group_payroll_payapprover" model="res.groups">
+            <field name="name">Payment Approver</field>
+            <field name="category_id" ref="hr_payroll_nigerian_state.module_category_payroll"/>
+            <field name="implied_ids" eval="[(4, ref('hr_security.group_payroll_user'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+            <field name="comment">generate NIBBS acceptable spreadsheet</field>
+        </record>
+        <record id="group_payroll_superhrofficer" model="res.groups">
+            <field name="name">Supervising HR Officer</field>
+            <field name="category_id" ref="hr_payroll_nigerian_state.module_category_payroll"/>
+            <field name="implied_ids" eval="[(4, ref('hr_security.group_payroll_user'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+            <field name="comment">approve every profiled staff so that the status of the staff will change from suspended or inactive to active</field>
+        </record>
+        <record id="group_payroll_dfanda" model="res.groups">
+            <field name="name">DF &amp; A</field>
+            <field name="category_id" ref="hr_payroll_nigerian_state.module_category_payroll"/>
+            <field name="implied_ids" eval="[(4, ref('hr_security.group_payroll_user'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+            <field name="comment">approve the input by the salary officers</field>
+        </record>
+        <record id="group_payroll_salaryofficer" model="res.groups">
+            <field name="name">Salary Officer</field>
+            <field name="category_id" ref="hr_payroll_nigerian_state.module_category_payroll"/>
+            <field name="implied_ids" eval="[(4, ref('hr_security.group_payroll_user'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+            <field name="comment">request for leave, redeployment, promotions, deductions etc on monthly basis for salary preparation</field>
+        </record>
+        <record id="group_payroll_recruitofficer" model="res.groups">
+            <field name="name">Recruitment Officer</field>
+            <field name="category_id" ref="hr_payroll_nigerian_state.module_category_payroll"/>
+            <field name="implied_ids" eval="[(4, ref('hr_security.group_payroll_user'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+            <field name="comment">admit staff into the HR system by profiling the staff whose data will be pulled from the biometric enrollment system</field>
+        </record>
+        <record id="group_payroll_chamsswitch" model="res.groups">
+            <field name="name">Chams Switch User</field>
+            <field name="category_id" ref="hr_payroll_nigerian_state.module_category_payroll"/>
+            <field name="implied_ids" eval="[(4, ref('hr_security.group_payroll_user'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+            <field name="comment">Perform Chams Switch transactions</field>
+        </record>
+        
+        <record id="property_rule_payroll_signoff" model="ir.rule">
+            <field name="name">Payroll Sign-off</field>
+            <field name="model_id" ref="model_ng_state_payroll_payroll_signoff"/>
+            <field name="domain_force">[('user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4,ref('hr_payroll_nigerian_state.group_payroll_officer'))]"/>
+        </record>
+        <record id="property_rule_scenario_signoff" model="ir.rule">
+            <field name="name">Scenario Sign-off</field>
+            <field name="model_id" ref="model_ng_state_payroll_scenario_signoff"/>
+            <field name="domain_force">[('user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4,ref('hr_payroll_nigerian_state.group_payroll_officer'))]"/>
+        </record>
+        <record id="property_rule_payroll_payroll_payrolladmin" model="ir.rule">
+            <field name="name">Payroll Definition - Payroll Admin</field>
+            <field name="model_id" ref="model_ng_state_payroll_payroll"/>
+            <field name="domain_force">[('create_user', '=', user.id)]</field>
+            <field name="groups" eval="[(4,ref('hr_payroll_nigerian_state.group_payroll_administrator'))]"/>
+        </record>
+        <record id="property_rule_hr_employee" model="ir.rule">
+            <field name="name">Employee - Payroll</field>
+            <field name="model_id" ref="model_hr_employee"/>
+            <field name="domain_force">['|', ('department_id.id', 'in', user.domain_mdas.ids), '|', ('tco_id.id', 'in', user.domain_tcos.ids), ('user_id', '=', user.id)]</field>
+            <field eval="False" name="global"/>
+        </record>
+        <record id="property_rule_hr_changereq" model="ir.rule">
+            <field name="name">HR Change Request - Global</field>
+            <field name="model_id" ref="model_ng_state_payroll_changereq"/>
+            <field name="domain_force">['|', ('employee_id.department_id.id', 'in', user.domain_mdas.ids), ('employee_id.tco_id.id', 'in', user.domain_tcos.ids)]</field>
+            <field eval="True" name="global"/>
+        </record>
+        <record id="property_rule_hr_demise" model="ir.rule">
+            <field name="name">HR Demise - Global</field>
+            <field name="model_id" ref="model_ng_state_payroll_demise"/>
+            <field name="domain_force">['|', ('employee_id.department_id.id', 'in', user.domain_mdas.ids), ('employee_id.tco_id.id', 'in', user.domain_tcos.ids)]</field>
+            <field eval="True" name="global"/>
+        </record>
+        <record id="property_rule_hr_disciplinary" model="ir.rule">
+            <field name="name">HR Disciplinary - Global</field>
+            <field name="model_id" ref="model_ng_state_payroll_disciplinary"/>
+            <field name="domain_force">['|', ('employee_id.department_id.id', 'in', user.domain_mdas.ids), ('employee_id.tco_id.id', 'in', user.domain_tcos.ids)]</field>
+            <field eval="True" name="global"/>
+        </record>
+        <record id="property_rule_hr_promotion" model="ir.rule">
+            <field name="name">HR Promotion - Global</field>
+            <field name="model_id" ref="model_ng_state_payroll_promotion"/>
+            <field name="domain_force">['|', ('employee_id.department_id.id', 'in', user.domain_mdas.ids), ('employee_id.tco_id.id', 'in', user.domain_tcos.ids)]</field>
+            <field eval="True" name="global"/>
+        </record>
+        <record id="property_rule_hr_query" model="ir.rule">
+            <field name="name">HR Query - Global</field>
+            <field name="model_id" ref="model_ng_state_payroll_query"/>
+            <field name="domain_force">['|', ('employee_id.department_id.id', 'in', user.domain_mdas.ids), ('employee_id.tco_id.id', 'in', user.domain_tcos.ids)]</field>
+            <field eval="True" name="global"/>
+        </record>
+        <record id="property_rule_hr_retirement" model="ir.rule">
+            <field name="name">HR Retirement - Global</field>
+            <field name="model_id" ref="model_ng_state_payroll_retirement"/>
+            <field name="domain_force">['|', ('employee_id.department_id.id', 'in', user.domain_mdas.ids), ('employee_id.tco_id.id', 'in', user.domain_tcos.ids)]</field>
+            <field eval="True" name="global"/>
+        </record>
+        <record id="property_rule_hr_termination" model="ir.rule">
+            <field name="name">HR Termination - Global</field>
+            <field name="model_id" ref="model_ng_state_payroll_termination"/>
+            <field name="domain_force">['|', ('employee_id.department_id.id', 'in', user.domain_mdas.ids), ('employee_id.tco_id.id', 'in', user.domain_tcos.ids)]</field>
+            <field eval="True" name="global"/>
+        </record>
+        <record id="property_rule_hr_transfer" model="ir.rule">
+            <field name="name">HR Department Transfer - Global</field>
+            <field name="model_id" ref="model_hr_department_transfer"/>
+            <field name="domain_force">['|', ('employee_id.department_id.id', 'in', user.domain_mdas.ids), ('employee_id.tco_id.id', 'in', user.domain_tcos.ids)]</field>
+            <field eval="True" name="global"/>
+        </record>
+        
+    </data>
+</openerp>

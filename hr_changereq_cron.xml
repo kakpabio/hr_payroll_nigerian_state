@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        
+        <record model="ir.cron" id="hr_changereq_cron">
+            <field name="name">Change Request Actions</field>
+            <field name="interval_number">5</field>
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+            <field eval="(DateTime.now() + timedelta(minutes=2)).strftime('%Y-%m-%d %H:%M:%S')" name="nextcall"/>
+            <field eval="False" name="doall"/>
+            <field eval="'ng.state.payroll.changereq'" name="model"/>
+            <field eval="'try_pending_changereq_actions'" name="function"/>
+            <field eval="'()'" name="args"/>
+        </record>
+        
+    </data>
+</openerp>

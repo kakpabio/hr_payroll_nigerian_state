@@ -1,0 +1,1273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <delete model="ir.ui.menu" id="hr_contract.menu_expiring_contracts"/>
+        <delete model="ir.actions.act_window" id="hr_payroll.action_view_hr_payslip_form"/>
+        <delete model="ir.actions.act_window" id="hr_payroll.action_hr_payslip_run_tree"/>
+        <delete model="ir.actions.act_window" id="hr_contract.action_hr_contract"/>
+        <delete model="ir.actions.act_window" id="hr_contract.hr_menu_contract"/>
+        <delete model="ir.actions.act_window" id="hr_contract_state.open_expiring_contracts"/>
+        <delete model="ir.actions.act_window" id="hr_contract_state.open_draft_contracts"/>
+        <delete model="ir.actions.act_window" id="hr_payroll.action_view_hr_payroll_structure_list_form"/>
+        <delete model="ir.actions.act_window" id="hr_payroll.action_view_hr_payroll_structure_tree"/>
+        <record id="view_department_form" model="ir.ui.view">
+            <field name="name">hr.department.form</field>
+            <field name="model">hr.department</field>
+            <field name="arch" type="xml">
+                <form string="department">
+                    <sheet>
+                        <group col="4">
+                            <field name="name"/>
+                            <field name="manager_id"/>
+                            <field name="parent_id"/>
+                            <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
+                            <field name="active"/>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <record id="view_department_tree" model="ir.ui.view">
+            <field name="name">hr.department.tree</field>
+            <field name="model">hr.department</field>
+            <field name="field_parent">child_ids</field>
+            <field name="arch" type="xml">
+                <tree string="Companies">
+                    <field name="complete_name"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="manager_id"/>
+                    <field name="active"/>
+                </tree>
+            </field>
+        </record>
+        <record id="ng_state_payroll_payroll_filter" model="ir.ui.view">
+            <field name="name">ng.state.payroll.payroll.search</field>
+            <field name="model">ng.state.payroll.payroll</field>
+            <field name="arch" type="xml">
+                <search string="Search Payslip Batches">
+                    <field name="name" string="Payslip Batches"/>
+                    <field name="from_date"/>
+                    <field name="to_date"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="ng_state_payroll_scenario_filter" model="ir.ui.view">
+            <field name="name">ng.state.payroll.scenario.search</field>
+            <field name="model">ng.state.payroll.scenario</field>
+            <field name="arch" type="xml">
+                <search string="Search Scenarios">
+                    <field name="payroll_id"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="ng_state_payroll_payroll_signoff_filter" model="ir.ui.view">
+            <field name="name">ng.state.payroll.payroll.signoff.search</field>
+            <field name="model">ng.state.payroll.payroll.signoff</field>
+            <field name="arch" type="xml">
+                <search string="Search Payroll Sign-off">
+                    <field name="payroll_id"/>
+                    <field name="user_id"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="ng_state_payroll_scenario_signoff_filter" model="ir.ui.view">
+            <field name="name">ng.state.payroll.scenario.signoff.search</field>
+            <field name="model">ng.state.payroll.scenario.signoff</field>
+            <field name="arch" type="xml">
+                <search string="Search Scenario Sign-off">
+                    <field name="scenario_id"/>
+                    <field name="user_id"/>
+                </search>
+            </field>
+        </record>
+        
+        <record id="ng_state_payroll_payroll_tree" model="ir.ui.view">
+            <field name="name">ng.state.payroll.payroll.tree</field>
+            <field name="model">ng.state.payroll.payroll</field>
+            <field name="arch" type="xml">
+                <tree string="Payroll">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record id="ng_state_payroll_scenario_tree" model="ir.ui.view">
+            <field name="name">ng.state.payroll.scenario.tree</field>
+            <field name="model">ng.state.payroll.scenario</field>
+            <field name="arch" type="xml">
+                <tree string="Payroll Runs">
+                    <field name="name"/>
+                    <field name="payroll_id"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record id="ng_state_payroll_payroll_signoff_tree" model="ir.ui.view">
+            <field name="name">ng.state.payroll.payroll.signoff.tree</field>
+            <field name="model">ng.state.payroll.payroll.signoff</field>
+            <field name="arch" type="xml">
+                <tree string="Payroll Sign-off">
+                    <field name="payroll_id"/>
+                    <field name="user_id"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record id="ng_state_payroll_scenario_signoff_tree" model="ir.ui.view">
+            <field name="name">ng.state.payroll.scenario.signoff.tree</field>
+            <field name="model">ng.state.payroll.scenario.signoff</field>
+            <field name="arch" type="xml">
+                <tree string="Payment Sign-off">
+                    <field name="scenario_id"/>
+                    <field name="user_id"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record id="ng_state_payroll_payscheme_tree" model="ir.ui.view">
+            <field name="name">ng.state.payroll.payscheme.tree</field>
+            <field name="model">ng.state.payroll.payscheme</field>
+            <field name="arch" type="xml">
+                <tree string="Payment Scheme">
+                    <field name="name"/>
+                    <field name="retirement_age"/>
+                    <field name="use_dob"/>
+                    <field name="use_dofa"/>
+                    <field name="active"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record id="ng_state_payroll_level_tree" model="ir.ui.view">
+            <field name="name">ng.state.payroll.level.tree</field>
+            <field name="model">ng.state.payroll.level</field>
+            <field name="arch" type="xml">
+                <tree string="Pay Level">
+                    <field name="name"/>
+                    <field name="pay_grade"/>
+                    <field name="active"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record id="ng_state_payroll_paycategory_tree" model="ir.ui.view">
+            <field name="name">ng.state.payroll.paycategory.tree</field>
+            <field name="model">ng.state.payroll.paycategory</field>
+            <field name="arch" type="xml">
+                <tree string="Pay Category">
+                    <field name="name"/>
+                    <field name="department"/>
+                    <field name="active"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record id="ng_state_payroll_taxrule_tree" model="ir.ui.view">
+            <field name="name">ng.state.payroll.taxrule.tree</field>
+            <field name="model">ng.state.payroll.taxrule</field>
+            <field name="arch" type="xml">
+                <tree string="Tax Rules">
+                    <field name="name"/>
+                    <field name="from_amount"/>
+                    <field name="to_amount"/>
+                    <field name="percentage"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="ng_state_payroll_earning_standard_tree" model="ir.ui.view">
+            <field name="name">ng.state.payroll.earning.standard.tree</field>
+            <field name="model">ng.state.payroll.earning.standard</field>
+            <field name="arch" type="xml">
+                <tree string="Standard Earnings">
+                    <field name="name"/>
+                    <field name="amount"/>
+                    <field name="fixed"/>
+                    <field name="taxable"/>
+                    <field name="payscheme_id"/>
+                    <field name="level_id"/>
+                    <field name="derived_from"/>
+                    <field name="active"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="ng_state_payroll_deduction_standard_tree" model="ir.ui.view">
+            <field name="name">ng.state.payroll.deduction.standard.tree</field>
+            <field name="model">ng.state.payroll.deduction.standard</field>
+            <field name="arch" type="xml">
+                <tree string="Standard Deductions">
+                    <field name="name"/>
+                    <field name="amount"/>
+                    <field name="fixed"/>
+                    <field name="payscheme_id"/>
+                    <field name="level_id"/>
+                    <field name="derived_from"/>
+                    <field name="active"/>
+                </tree>
+            </field>
+        </record>
+        <record id="ng_state_payroll_earning_nonstd_tree" model="ir.ui.view">
+            <field name="name">ng.state.payroll.earning.nonstd.tree</field>
+            <field name="model">ng.state.payroll.earning.nonstd</field>
+            <field name="arch" type="xml">
+                <tree string="Nonstandard Earnings">
+                    <field name="name"/>
+                    <field name="employee_id"/>
+                    <field name="amount"/>
+                    <field name="taxable"/>
+                    <field name="permanent"/>
+                    <field name="active"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="ng_state_payroll_deduction_nonstd_tree" model="ir.ui.view">
+            <field name="name">ng.state.payroll.deduction.nonstd.tree</field>
+            <field name="model">ng.state.payroll.deduction.nonstd</field>
+            <field name="arch" type="xml">
+                <tree string="Nonstandard Deductions">
+                    <field name="name"/>
+                    <field name="amount"/>
+                    <field name="employee_id"/>
+                    <field name="permanent"/>
+                    <field name="active"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="ng_state_payroll_deduction_pension_tree" model="ir.ui.view">
+            <field name="name">ng.state.payroll.deduction.pension.tree</field>
+            <field name="model">ng.state.payroll.deduction.pension</field>
+            <field name="arch" type="xml">
+                <tree string="Pension Deductions">
+                    <field name="name"/>
+                    <field name="amount"/>
+                    <field name="fixed"/>
+                    <field name="active"/>
+                </tree>
+            </field>
+        </record>
+                
+        <record id="ng_state_payroll_payroll_form" model="ir.ui.view">
+            <field name="name">ng.state.payroll.payroll.form</field>
+            <field name="model">ng.state.payroll.payroll</field>
+            <field name="arch" type="xml">
+                <form string="Payroll Runs">
+                    <div class="oe_read_only">
+                    <header>
+                        <button class="oe_highlight" name="set_pending" type="object" states="draft" string="Process" attrs="{'invisible':['|',('state', 'not in', ['draft']),'|',('calendar_id', '=', False)]}" groups="hr_payroll_nigerian_state.group_payroll_administrator"/>
+                        <button class="oe_highlight" name="revert" type="object" states="processed" string="Revert" attrs="{'invisible':[('state', 'not in', ['processed'])]}" groups="hr_payroll_nigerian_state.group_payroll_administrator"/>
+                        <button class="oe_highlight" name="sign_off" type="object" states="processed" string="Sign Off" attrs="{'invisible':[('state', 'not in', ['processed'])]}" groups="hr_payroll_nigerian_state.group_payroll_officer"/>
+                        <field name="state" widget="statusbar" statusbar_colors="{'draft':'red','processing':'red','processed':'red','closed':'blue'}"/>
+                    </header>
+                    </div>
+                    <div class="oe_edit_only">
+                    <header>
+                        <field name="do_dry_run" attrs="{'invisible':[('state', 'not in', ['draft']),('calendar_id', '=', False)]}" />
+                        <label for="do_dry_run" string="Tick to do dry run"/>
+                    </header>
+                    </div>
+                    <sheet>
+                        <group>
+                            <field name="do_payroll" />
+                            <field name="do_pension" />
+                        </group>
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                        <group>
+                            <field name="calendar_id" domain="[('from_date','&lt;=', time.strftime('%%Y-12-31')),('from_date','&gt;=',time.strftime('%%Y-01-01'))]" />
+                            <field name="processing_time_payroll" attrs="{'readonly': [('do_dry_run','=',False)],'invisible': [('do_payroll','=',False)]}"/>
+                            <field name="processing_time_pension" attrs="{'readonly': [('do_dry_run','=',False)],'invisible': [('do_pension','=',False)]}"/>
+                        </group>
+                        <group col="5" attrs="{'invisible': [('do_payroll','=',False)]}">
+                            <label for="total_gross_payroll" string="Payroll Total Gross"/>
+                            <label for="total_taxable_payroll" string="Payroll Total Taxable"/>
+                            <label for="total_net_payroll" string="Payroll Total Net"/>
+                            <label for="total_tax_payroll" string="Payroll Total PAYE"/>
+                            <label for="total_balance_payroll" string="Payroll Total Balance"/>
+                        </group>
+                        <group col="5" attrs="{'invisible': [('do_payroll','=',False)]}">
+                            <div><field name="total_gross_payroll" attrs="{'readonly': [('do_dry_run','=',False)]}"/></div>
+                            <div><field name="total_taxable_payroll" attrs="{'readonly': [('do_dry_run','=',False)]}"/></div>
+                            <div><field name="total_net_payroll" attrs="{'readonly': [('do_dry_run','=',False)]}"/></div>
+                            <div><field name="total_tax_payroll" attrs="{'readonly': [('do_dry_run','=',False)]}"/></div>
+                            <div><field name="total_balance_payroll" attrs="{'readonly': [('do_dry_run','=',False)]}"/></div>
+                        </group>
+                        <group col="3" attrs="{'invisible': [('do_pension','=',False)]}">
+                            <label for="total_gross_pension" string="Pension Total Gross"/>
+                            <label for="total_net_pension" string="Pension Total Net"/>
+                            <label for="total_balance_pension" string="Pension Total Balance"/>
+                        </group>
+                        <group col="3" attrs="{'invisible': [('do_pension','=',False)]}">
+                            <div><field name="total_gross_pension" attrs="{'readonly': [('do_dry_run','=',False)]}"/></div>
+                            <div><field name="total_net_pension" attrs="{'readonly': [('do_dry_run','=',False)]}"/></div>
+                            <div><field name="total_balance_pension" attrs="{'readonly': [('do_dry_run','=',False)]}"/></div>
+                        </group>
+                        <notebook>
+                            <page string="Active Payroll" attrs="{'invisible': [('do_payroll','=',False)]}">
+                                <field name="payroll_item_ids" widget="one2many_list" readonly="0">
+                                    <tree>
+                                        <field name="employee_id" />
+                                        <field name="gross_income" />
+                                        <field name="taxable_income" />
+                                        <field name="net_income" />
+                                        <field name="paye_tax" />
+                                        <field name="balance_income" />
+                                    </tree>                                  
+                                </field>
+                            </page>
+                            <page string="Pension Payroll" attrs="{'invisible': [('do_pension','=',False)]}">
+                                <field name="pension_item_ids" widget="one2many_list" readonly="0">
+                                    <tree>
+                                        <field name="employee_id" />
+                                        <field name="gross_income" />
+                                        <field name="net_income" />
+                                        <field name="balance_income" />
+                                    </tree>                                  
+                                </field>
+                            </page>
+                            <page string="Organization Summary" attrs="{'invisible': [('do_payroll','=',False)]}">
+                                <field name="payroll_summary_ids" widget="one2many_list" readonly="0">
+                                    <tree>
+                                        <field name="department_id" />
+                                        <field name="total_gross_income" />
+                                        <field name="total_taxable_income" />
+                                        <field name="total_net_income" />
+                                        <field name="total_paye_tax" />
+                                        <field name="total_leave_allowance" />
+                                    </tree>                                  
+                                </field>
+                            </page>
+                            <page string="Scenarios">
+                                <field name="scenario_ids" widget="one2many_list" readonly="1">
+                                    <tree>
+                                        <field name="name" />
+                                        <field name="total_amount" />
+                                    </tree>                                  
+                                </field>
+                            </page>
+                            <page string="Subvention">
+                                <field name="subvention_item_ids" widget="one2many_list" readonly="0">
+                                    <tree>
+                                        <field name="department_id" />
+                                        <field name="name" />
+                                        <field name="amount" />
+                                    </tree>                                  
+                                </field>
+                            </page>
+                            <page string="Sign-Offs">
+                                <field name="signoff_ids" widget="one2many_list" context="{'default_payroll_id': active_id}">
+                                    <tree>
+                                        <field name="user_id" />
+                                        <field name="signed_off" />
+                                    </tree>                                  
+                                </field>
+                            </page>
+                            <page string="Signatures" attrs="{'invisible':[('state', 'not in', ['closed'])]}" groups="hr_payroll_nigerian_state.group_governor,hr_payroll_nigerian_state.group_payroll_psfinance">
+                                <field name="ps_finance_sign" widget="signature" attrs="{'invisible':[('state', 'not in', ['closed'])]}" groups="hr_payroll_nigerian_state.group_payroll_psfinance"/>
+                                <field name="gov_sign" widget="signature" attrs="{'invisible':[('state', 'not in', ['closed'])]}" groups="hr_payroll_nigerian_state.group_governor"/>
+                            </page>
+                       </notebook>                    
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>        
+               
+        <record id="ng_state_payroll_scenario_form" model="ir.ui.view">
+            <field name="name">ng.state.payroll.scenario.form</field>
+            <field name="model">ng.state.payroll.scenario</field>
+            <field name="arch" type="xml">
+                <form string="Process Payment">
+                    <div class="oe_read_only">
+                    <header>
+                        <button class="oe_highlight" name="finalize" type="object" states="draft" string="Process" attrs="{'invisible':[('state', 'not in', ['draft'])]}"/>
+                        <button class="oe_highlight" name="revert" type="object" states="processed" string="Revert" attrs="{'invisible':[('state', 'not in', ['processed'])]}" groups="hr_payroll_nigerian_state.group_payroll_administrator"/>
+                        <button class="oe_highlight" name="sign_off" type="object" states="processed" string="Sign Off" attrs="{'invisible':[('state', 'not in', ['processed'])]}" groups="hr_payroll_nigerian_state.group_payroll_psfinance"/>
+                        <field name="state" widget="statusbar" statusbar_colors="{'draft':'red','processed':'red','closed':'blue'}"/>
+                    </header>
+                    </div>
+                    <div class="oe_edit_only">
+                    <header>
+                        <field name="do_dry_run" attrs="{'invisible':[('state', 'not in', ['draft'])]}" />
+                        <label for="do_dry_run" string="Tick to do dry run"/>
+                    </header>
+                    </div>
+                    <sheet>
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                        <group>
+                            <field name="payroll_id" domain="[('state','=', 'closed')]" />
+                            <field name="total_amount" attrs="{'readonly': [('do_dry_run','=',False)]}"/>
+                            <field name="processing_time"  attrs="{'readonly': [('do_dry_run','=',False)]}"/>
+                        </group>
+                        <notebook>
+                            <page string="Payroll Scenarios">
+                                <field name="scenario_item_ids" widget="one2many_list" readonly="0">
+                                    <tree>
+                                        <field name="level_min" />
+                                        <field name="level_max" />
+                                        <field name="percentage" />
+                                    </tree>                                  
+                                </field>
+                            </page>
+                            <page string="Pension Scenarios">
+                                <field name="scenario2_item_ids" widget="one2many_list" readonly="0">
+                                    <tree>
+                                        <field name="amount_min" />
+                                        <field name="amount_max" />
+                                        <field name="percentage" />
+                                    </tree>                                  
+                                </field>
+                            </page>
+                            <page string="Payments">
+                                <field name="payment_ids" widget="one2many_list" readonly="1">
+                                    <tree>
+                                        <field name="employee_id" />
+                                        <field name="amount" />
+                                        <field name="percentage" />
+                                        <field name="net_income" />
+                                        <field name="balance_income" />
+                                    </tree>                                  
+                                </field>
+                            </page>
+                            <page string="Sign-Offs">
+                                <field name="signoff_ids" widget="one2many_list" context="{'default_scenario_id': active_id}">
+                                    <tree>
+                                        <field name="user_id" />
+                                        <field name="signed_off" />
+                                    </tree>                                  
+                                </field>
+                            </page>
+                            <page string="Signatures" groups="hr_payroll_nigerian_state.group_governor,hr_payroll_nigerian_state.group_payroll_psfinance">
+                                <group column="2">
+                                    <field name="ps_finance_sign" widget="signature" attrs="{'invisible':[('state', 'not in', ['closed'])]}" groups="hr_payroll_nigerian_state.group_payroll_psfinance"/>
+                                    <field name="gov_sign" widget="signature" attrs="{'invisible':[('state', 'not in', ['closed'])]}" groups="hr_payroll_nigerian_state.group_governor"/>
+                                </group>
+                                <group column="2">
+                                    <label for="ps_finance_sign" groups="hr_payroll_nigerian_state.group_payroll_psfinance"/>
+                                    <label for="gov_sign" groups="hr_payroll_nigerian_state.group_governor"/>
+                                </group>
+                            </page>
+                       </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>        
+                
+        <record id="ng_state_payroll_payroll_signoff_form" model="ir.ui.view">
+            <field name="name">ng.state.payroll.payroll.signoff.form</field>
+            <field name="model">ng.state.payroll.payroll.signoff</field>
+            <field name="arch" type="xml">
+                <form string="Payroll Sign-off">
+                    <div class="oe_read_only">
+                    <header>
+                        <button class="oe_highlight" name="sign_off" type="object" string="Sign Off" groups="hr_payroll_nigerian_state.group_payroll_officer"/>
+                    </header>
+                    </div>
+                    <sheet>
+                        <field name="payroll_id" class="oe_edit_only" context="{'default_payroll_id': active_id}" />
+                        <field name="user_id" class="oe_edit_only" />
+                        <field name="pos_order" class="oe_edit_only" />
+                    </sheet>
+                </form>
+            </field>
+        </record>
+                
+        <record id="ng_state_payroll_scenario_signoff_form" model="ir.ui.view">
+            <field name="name">ng.state.payroll.scenario.signoff.form</field>
+            <field name="model">ng.state.payroll.scenario.signoff</field>
+            <field name="arch" type="xml">
+                <form string="Payment Sign-off">
+                    <div class="oe_read_only">
+                    <header>
+                        <button class="oe_highlight" name="sign_off" type="object" string="Sign Off" groups="hr_payroll_nigerian_state.group_payroll_officer"/>
+                    </header>
+                    </div>
+                    <sheet>
+                        <field name="scenario_id" class="oe_edit_only" context="{'default_payroll_id': active_id}" />
+                        <field name="user_id" class="oe_edit_only" />
+                        <field name="pos_order" class="oe_edit_only" />
+                    </sheet>
+                </form>
+            </field>
+        </record>
+                       
+        <record id="ng_state_payroll_payroll_item_form" model="ir.ui.view">
+            <field name="name">ng.state.payroll.payroll.item.form</field>
+            <field name="model">ng.state.payroll.payroll.item</field>
+            <field name="arch" type="xml">
+                <form string="Payroll Item">
+                    <sheet>
+                        <h1>
+                            <field name="employee_id"/>
+                        </h1>
+                        <group col="5">
+                            <label for="gross_income" string="Gross Income"/>
+                            <label for="taxable_income" string="Taxable Income"/>
+                            <label for="net_income" string="Net Income"/>
+                            <label for="paye_tax" string="PAYE Tax"/>
+                            <label for="balance_income" string="Unpaid Balance"/>
+                        </group>
+                        <group col="5">
+                            <div><field name="gross_income" /></div>
+                            <div><field name="taxable_income" /></div>
+                            <div><field name="net_income" /></div>
+                            <div><field name="paye_tax" /></div>
+                            <div><field name="balance_income" /></div>
+                        </group>
+                        <notebook>
+                            <page string="Items">
+                                <field name="item_line_ids" widget="one2many_list" readonly="1">
+                                    <tree>
+                                        <field name="name" />
+                                        <field name="code" />
+                                        <field name="amount" />
+                                    </tree>                                  
+                                </field>
+                            </page>
+                            <page string="Payments">
+                                <field name="payment_item_ids" widget="one2many_list" readonly="1">
+                                    <tree>
+                                        <field name="amount" />
+                                        <field name="percentage" />
+                                    </tree>                                  
+                                </field>
+                            </page>
+                       </notebook>                    
+                    </sheet>
+                </form>
+            </field>
+        </record>
+                       
+        <record id="ng_state_payroll_pension_item_form" model="ir.ui.view">
+            <field name="name">ng.state.payroll.pension.item.form</field>
+            <field name="model">ng.state.payroll.pension.item</field>
+            <field name="arch" type="xml">
+                <form string="Pension Item">
+                    <sheet>
+                        <h1>
+                            <field name="employee_id"/>
+                        </h1>
+                        <group col="5">
+                            <label for="gross_income" string="Gross Income"/>
+                            <label for="net_income" string="Net Income"/>
+                            <label for="balance_income" string="Unpaid Balance"/>
+                        </group>
+                        <group col="3">
+                            <div><field name="gross_income" /></div>
+                            <div><field name="net_income" /></div>
+                            <div><field name="balance_income" /></div>
+                        </group>
+                        <notebook>
+                            <page string="Items">
+                                <field name="item_line_ids" widget="one2many_list" readonly="1">
+                                    <tree>
+                                        <field name="name" />
+                                        <field name="code" />
+                                        <field name="amount" />
+                                    </tree>                                  
+                                </field>
+                            </page>
+                            <page string="Payments">
+                                <field name="payment_item_ids" widget="one2many_list" readonly="1">
+                                    <tree>
+                                        <field name="amount" />
+                                        <field name="percentage" />
+                                    </tree>                                  
+                                </field>
+                            </page>
+                       </notebook>                    
+                    </sheet>
+                </form>
+            </field>
+        </record>
+                       
+        <record id="ng_state_payroll_deduction_pension_form" model="ir.ui.view">
+            <field name="name">ng.state.payroll.deduction.pension.form</field>
+            <field name="model">ng.state.payroll.deduction.pension</field>
+            <field name="arch" type="xml">
+                <form string="Pension Deduction">
+                    <sheet>
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                        <group col="3">
+                            <label for="amount" string="Amount"/>
+                            <label for="fixed" string="Fixed"/>
+                            <label for="active" string="Active"/>
+                        </group>
+                        <group col="3">
+                            <div><field name="amount" /></div>
+                            <div><field name="fixed" /></div>
+                            <div><field name="active" /></div>
+                        </group>
+                        <notebook>
+                            <page string="Whitelist">
+                                <field name="whitelist_ids" widget="many2many_list" readonly="0">
+                                    <tree>
+                                        <field name="name_related" />
+                                        <field name="employee_no" />
+                                        <field name="lga_id" />
+                                        <field name="lga_id" />
+                                    </tree>                                  
+                                </field>
+                            </page>
+                            <page string="Blacklist">
+                                <field name="blacklist_ids" widget="many2many_list" readonly="0">
+                                    <tree>
+                                        <field name="name_related" />
+                                        <field name="employee_no" />
+                                        <field name="lga_id" />
+                                        <field name="lga_id" />
+                                    </tree>                                  
+                                </field>
+                            </page>
+                       </notebook>                    
+                    </sheet>
+                </form>
+            </field>
+        </record>
+                         
+        <record id="action_ng_state_payroll_payroll_tree" model="ir.actions.act_window">
+            <field name="name">Payroll</field>
+            <field name="res_model">ng.state.payroll.payroll</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="ng_state_payroll_payroll_tree"/>
+            <field name="search_view_id" ref="ng_state_payroll_payroll_filter"/>
+        </record>
+                  
+        <record id="action_ng_state_payroll_scenario_tree" model="ir.actions.act_window">
+            <field name="name">Scenario</field>
+            <field name="res_model">ng.state.payroll.scenario</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="ng_state_payroll_scenario_tree"/>
+            <field name="search_view_id" ref="ng_state_payroll_scenario_filter"/>
+        </record>
+                         
+        <record id="action_ng_state_payroll_payroll_signoff_tree" model="ir.actions.act_window">
+            <field name="name">Payroll Sign-off</field>
+            <field name="res_model">ng.state.payroll.payroll.signoff</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="ng_state_payroll_payroll_signoff_tree"/>
+            <field name="search_view_id" ref="ng_state_payroll_payroll_signoff_filter"/>
+        </record>
+                         
+        <record id="action_ng_state_payroll_scenario_signoff_tree" model="ir.actions.act_window">
+            <field name="name">Payment Sign-off</field>
+            <field name="res_model">ng.state.payroll.scenario.signoff</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="ng_state_payroll_scenario_signoff_tree"/>
+            <field name="search_view_id" ref="ng_state_payroll_scenario_signoff_filter"/>
+        </record>
+      
+        <menuitem action="action_ng_state_payroll_payroll_tree" id="menu_ng_state_payroll_payroll" parent="hr_payroll.menu_hr_payroll_root"/>
+        <menuitem action="action_ng_state_payroll_scenario_tree" id="menu_ng_state_payroll_scenario" parent="hr_payroll.menu_hr_payroll_root"/>
+        <menuitem id="hr_payroll.menu_hr_payroll_configuration" name="Configuration" parent="hr_payroll.menu_hr_payroll_root"
+            sequence="100" groups="base.group_hr_manager,base.group_configuration"/>
+        
+        <record id="action_view_hr_payroll_payscheme_list_form" model="ir.actions.act_window">
+            <field name="name">Pay Schemes</field>
+            <field name="res_model">ng.state.payroll.payscheme</field>
+            <field name="view_type">form</field>
+        </record>
+        
+        <menuitem
+            id="menu_hr_payroll_payscheme_view"
+            action="action_view_hr_payroll_payscheme_list_form"
+            parent="hr_payroll.menu_hr_payroll_configuration"
+            sequence="2"
+        />
+        <record id="action_view_hr_payroll_payscheme_tree" model="ir.actions.act_window">
+            <field name="name">Pay Schemes</field>
+            <field name="res_model">ng.state.payroll.payscheme</field>
+            <field name="view_type">tree</field>
+            <field name="view_id" ref="ng_state_payroll_payscheme_tree"/>
+        </record>                    
+        
+        <record id="action_view_hr_payroll_level_list_form" model="ir.actions.act_window">
+            <field name="name">Pay Levels</field>
+            <field name="res_model">ng.state.payroll.level</field>
+            <field name="view_type">form</field>
+        </record>
+        
+        <menuitem
+            id="menu_hr_payroll_level_view"
+            action="action_view_hr_payroll_level_list_form"
+            parent="hr_payroll.menu_hr_payroll_configuration"
+            sequence="2"
+        />
+        <record id="action_view_hr_payroll_level_tree" model="ir.actions.act_window">
+            <field name="name">Pay Levels</field>
+            <field name="res_model">ng.state.payroll.level</field>
+            <field name="view_type">tree</field>
+            <field name="view_id" ref="ng_state_payroll_level_tree"/>
+        </record>                    
+        
+        <record id="action_view_hr_payroll_paycategory_list_form" model="ir.actions.act_window">
+            <field name="name">Pay Categories</field>
+            <field name="res_model">ng.state.payroll.paycategory</field>
+            <field name="view_type">form</field>
+        </record>
+        
+        <menuitem
+            id="menu_hr_payroll_paycategory_view"
+            action="action_view_hr_payroll_paycategory_list_form"
+            parent="hr_payroll.menu_hr_payroll_configuration"
+            sequence="2"
+        />
+        <record id="action_view_hr_payroll_paycategory_tree" model="ir.actions.act_window">
+            <field name="name">Pay Categories</field>
+            <field name="res_model">ng.state.payroll.paycategory</field>
+            <field name="view_type">tree</field>
+            <field name="view_id" ref="ng_state_payroll_paycategory_tree"/>
+        </record>                    
+        
+        <record id="action_view_hr_payroll_taxrule_list_form" model="ir.actions.act_window">
+            <field name="name">Tax Rules</field>
+            <field name="res_model">ng.state.payroll.taxrule</field>
+            <field name="view_type">form</field>
+        </record>
+        
+        <menuitem
+            id="menu_hr_payroll_taxrule_view"
+            action="action_view_hr_payroll_taxrule_list_form"
+            parent="hr_payroll.menu_hr_payroll_configuration"
+            sequence="2"
+        />
+        <record id="action_view_hr_payroll_taxrule_tree" model="ir.actions.act_window">
+            <field name="name">Tax Rules</field>
+            <field name="res_model">ng.state.payroll.taxrule</field>
+            <field name="view_type">tree</field>
+            <field name="view_id" ref="ng_state_payroll_taxrule_tree"/>
+        </record>                    
+        
+        <record id="action_view_hr_payroll_earning_standard_list_form" model="ir.actions.act_window">
+            <field name="name">Standard Earnings</field>
+            <field name="res_model">ng.state.payroll.earning.standard</field>
+            <field name="view_type">form</field>
+        </record>
+        
+        <menuitem
+            id="menu_hr_payroll_earning_standard_view"
+            action="action_view_hr_payroll_earning_standard_list_form"
+            parent="hr_payroll.menu_hr_payroll_configuration"
+            sequence="2"
+        />
+        <record id="action_view_hr_payroll_earning_standard_tree" model="ir.actions.act_window">
+            <field name="name">Standard Earnings</field>
+            <field name="res_model">ng.state.payroll.earning.standard</field>
+            <field name="view_type">tree</field>
+            <field name="view_id" ref="ng_state_payroll_earning_standard_tree"/>
+        </record>            
+        
+        <record id="action_view_hr_payroll_deduction_standard_list_form" model="ir.actions.act_window">
+            <field name="name">Standard Deductions</field>
+            <field name="res_model">ng.state.payroll.deduction.standard</field>
+            <field name="view_type">form</field>
+        </record>
+        
+        <menuitem
+            id="menu_hr_payroll_deduction_standard_view"
+            action="action_view_hr_payroll_deduction_standard_list_form"
+            parent="hr_payroll.menu_hr_payroll_configuration"
+            sequence="2"
+        />
+        <record id="action_view_hr_payroll_deduction_standard_tree" model="ir.actions.act_window">
+            <field name="name">Standard Deductions</field>
+            <field name="res_model">ng.state.payroll.deduction.standard</field>
+            <field name="view_type">tree</field>
+            <field name="view_id" ref="ng_state_payroll_deduction_standard_tree"/>
+        </record>            
+        
+        <record id="action_view_hr_payroll_earning_nonstd_list_form" model="ir.actions.act_window">
+            <field name="name">Nonstandard Earnings</field>
+            <field name="res_model">ng.state.payroll.earning.nonstd</field>
+            <field name="view_type">form</field>
+        </record>
+        
+        <menuitem
+            id="menu_hr_payroll_earning_nonstd_view"
+            action="action_view_hr_payroll_earning_nonstd_list_form"
+            parent="hr_payroll.menu_hr_payroll_configuration"
+            sequence="2"
+        />
+        <record id="action_view_hr_payroll_earning_nonstd_tree" model="ir.actions.act_window">
+            <field name="name">Nonstandard Earnings</field>
+            <field name="res_model">ng.state.payroll.earning.nonstd</field>
+            <field name="view_type">tree</field>
+            <field name="view_id" ref="ng_state_payroll_earning_nonstd_tree"/>
+        </record>            
+        
+        <record id="action_view_hr_payroll_deduction_nonstd_list_form" model="ir.actions.act_window">
+            <field name="name">Nonstandard Deductions</field>
+            <field name="res_model">ng.state.payroll.deduction.nonstd</field>
+            <field name="view_type">form</field>
+        </record>
+        
+        <menuitem
+            id="menu_hr_payroll_deduction_nonstd_view"
+            action="action_view_hr_payroll_deduction_nonstd_list_form"
+            parent="hr_payroll.menu_hr_payroll_configuration"
+            sequence="2"
+        />
+        <record id="action_view_hr_payroll_deduction_nonstd_tree" model="ir.actions.act_window">
+            <field name="name">Nonstandard Deductions</field>
+            <field name="res_model">ng.state.payroll.deduction.nonstd</field>
+            <field name="view_type">tree</field>
+            <field name="view_id" ref="ng_state_payroll_deduction_nonstd_tree"/>
+        </record>            
+        
+        <record id="action_view_hr_payroll_deduction_pension_list_form" model="ir.actions.act_window">
+            <field name="name">Pension Deductions</field>
+            <field name="res_model">ng.state.payroll.deduction.pension</field>
+            <field name="view_type">form</field>
+        </record>
+        
+        <menuitem
+            id="menu_hr_payroll_deduction_pension_view"
+            action="action_view_hr_payroll_deduction_pension_list_form"
+            parent="hr_payroll.menu_hr_payroll_configuration"
+            sequence="2"
+        />
+        <record id="action_view_hr_payroll_deduction_pension_tree" model="ir.actions.act_window">
+            <field name="name">Pension Deductions</field>
+            <field name="res_model">ng.state.payroll.deduction.pension</field>
+            <field name="view_type">tree</field>
+            <field name="view_id" ref="ng_state_payroll_deduction_pension_tree"/>
+        </record>            
+
+        <!-- Employee View -->
+        <record id="payroll_hr_employee_view_form" model="ir.ui.view">
+            <field name="name">payroll.hr.employee.view.form</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <data>
+                     <xpath expr="//notebook/page[@name='public']" position="after">
+                        <page string="Extended Info" groups="base.group_hr_user">
+                            <group>
+                                <field name="employee_no"/>
+                                <field name="school_emp_id" attrs="{'invisible':[('school_emp_id', '==', False)]}"/>
+                                <field name="title_id"/>
+                                <field name="status_id"/>
+                                <field name="hire_date"/>
+                                <field name="confirmation_date"/>
+                                <field name="retirement_due_date"/>
+                            </group>
+                            <group>
+                                <field name="school_id" attrs="{'invisible':[('school_emp_id', '==', False)]}"/>
+                                <field name="lga_id"/>
+                                <field name="pfa_id"/>
+                                <field name="grade_level"/>
+                                <field name="paycategory_id"/>
+                                <field name="payscheme_id"/>
+                                <field name="bank_account_no"/>
+                                <field name="bank_id"/>
+                            </group>
+                        </page>
+                        <page string="Standard Earnings" groups="base.group_hr_user">
+                            <field name="standard_earnings" widget="many2many_list" readonly="0">
+                                <tree string="Standard Earnings">
+                                    <field name="name"/>
+                                    <field name="amount"/>
+                                    <field name="fixed"/>
+                                    <field name="taxable"/>
+                                    <field name="payscheme_id"/>
+                                    <field name="level_id"/>
+                                    <field name="derived_from"/>
+                                    <field name="active"/>
+                                </tree>
+                            </field>                        
+                        </page>
+                        <page string="Nonstandard Earnings" groups="base.group_hr_user">
+                            <field name="nonstd_earnings" widget="one2many_list" readonly="0">
+                                <tree string="Nonstandard Earnings">
+                                    <field name="name"/>
+                                    <field name="amount"/>
+                                    <field name="taxable"/>
+                                    <field name="permanent"/>
+                                    <field name="active"/>
+                                </tree>
+                            </field>                        
+                        </page>
+                        <page string="Standard Deductions" groups="base.group_hr_user">
+                            <field name="standard_deductions" widget="many2many_list" readonly="0">
+                                <tree string="Standard Deductions">
+                                    <field name="name"/>
+                                    <field name="amount"/>
+                                    <field name="fixed"/>
+                                    <field name="payscheme_id"/>
+                                    <field name="level_id"/>
+                                    <field name="derived_from"/>
+                                    <field name="active"/>
+                                </tree>
+                            </field>                        
+                        </page>
+                        <page string="Nonstandard Deductions" groups="base.group_hr_user">
+                            <field name="nonstd_deductions" widget="one2many_list" readonly="0">
+                                <tree string="Nonstandard Deductions">
+                                    <field name="name"/>
+                                    <field name="amount"/>
+                                    <field name="permanent"/>
+                                    <field name="active"/>
+                                </tree>
+                            </field>                        
+                        </page>
+                     </xpath>
+                </data>
+            </field>
+        </record>
+        
+        <record id="view_users_form" model="ir.ui.view">
+            <field name="name">res.users.form</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_form"/>
+            <field name="arch" type="xml">
+                <data>
+                     <xpath expr="//notebook/page[@name='access_rights']" position="after">
+                        <page name="domain_mdas" string="Domain MDAs">
+                            <field name="domain_mdas" widget="many2many" />
+                        </page>
+                    </xpath>
+                </data>
+            </field>
+        </record>       
+
+        <record id="hr.view_department_filter" model="ir.ui.view">
+            <field name="name">MDAs</field>
+            <field name="model">hr.department</field>
+            <field name="arch" type="xml">
+                <search string="MDAs">
+                    <field name="name" string="MDA"/>
+                    <field name="manager_id" />
+                    <filter string="Important Messages" name="message_needaction" domain="[('message_needaction','=',True)]"/>
+                </search>
+             </field>
+        </record>
+        
+        <record id="hr.open_module_tree_department" model="ir.actions.act_window">
+            <field name="name">MDAs</field>
+            <field name="res_model">hr.department</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="search_view_id" ref="hr.view_department_filter"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to create an MDA.
+              </p><p>
+                ChamsERP's department structure is used to manage all documents
+                related to employees by departments: expenses, timesheets,
+                leaves and holidays, recruitments, etc.
+              </p>
+            </field>
+        </record>
+        
+        <record id="hr_transfer.department_transfer_form_view" model="ir.ui.view">
+            <field name="name">hr.department.transfer.form</field>
+            <field name="model">hr.department.transfer</field>
+            <field name="arch" type="xml">
+                <form string="MDA Transfer">
+                    <sheet>
+                        <header>
+                            <button name="signal_confirm" type="workflow" states="draft" string="Confirm" class="oe_highlight"/>
+                            <button name="signal_pending" type="workflow" states="confirm" string="Complete" class="oe_highlight"/>
+                            <button name="signal_cancel" type="workflow" states="confirm,pending" string="Cancel" class="oe_highlight"/>
+                            <field name="state" widget="statusbar"/>
+                        </header>
+                        <group>
+                            <group>
+                                <field name="employee_id" on_change="onchange_employee(employee_id)"/>
+                                <field name="date"/>
+                                <field name="src_department_id"/>
+                                <field name="dst_department_id"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+                
+        <record id="hr_transfer.open_hr_department_transfer" model="ir.actions.act_window">
+            <field name="name">MDA Transfers</field>
+            <field name="res_model">hr.department.transfer</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+       
+        <record id="department_transfer_tree_view" model="ir.ui.view">
+            <field name="name">hr.department.transfer.tree</field>
+            <field name="model">hr.department.transfer</field>
+            <field name="arch" type="xml">
+                <tree string="Departmental Transfers">
+                    <field name="employee_id"/>
+                    <field name="src_department_id"/>
+                    <field name="dst_department_id"/>
+                    <field name="date"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record id="employee_promotion_form_view" model="ir.ui.view">
+            <field name="name">ng.state.payroll.promotion.form</field>
+            <field name="model">ng.state.payroll.promotion</field>
+            <field name="arch" type="xml">
+                <form string="Employee Promotion" version="9.0">
+                    <sheet>
+                        <header>
+                            <button name="promotion_signal_confirm" type="workflow" states="draft" string="Confirm" class="oe_highlight"/>
+                            <button name="promotion_signal_pending" type="workflow" states="confirm" string="Complete" class="oe_highlight"/>
+                            <button name="promotion_signal_cancel" type="workflow" states="confirm,pending" string="Cancel" class="oe_highlight"/>
+                            <field name="state" widget="statusbar"/>
+                        </header>
+                        <group>
+                            <group>
+                                <field name="employee_id" on_change="onchange_employee(employee_id)"/>
+                                <field name="promotion_type" readonly="1"/>
+                                <field name="from_pay_category_id" readonly="1"/>
+                                <field name="from_pay_scheme_id" readonly="1" />
+                                <field name="from_grade_level" readonly="1" />
+                                <field name="date"/>
+                                <field name="end_date"/>
+                                <field name="acting"/>
+                            </group>
+                            <group>
+                                <field name="to_pay_category_id" />
+                                <field name="to_pay_scheme_id" />
+                                <field name="to_grade_level" />
+                            </group>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+       
+        <record id="employee_promotion_tree_view" model="ir.ui.view">
+            <field name="name">ng.state.payroll.promotion.tree</field>
+            <field name="model">ng.state.payroll.promotion</field>
+            <field name="arch" type="xml">
+                <tree string="Employee Promotion">
+                    <field name="employee_id"/>
+                    <field name="promotion_type"/>
+                    <field name="to_pay_category_id"/>
+                    <field name="to_pay_scheme_id"/>
+                    <field name="to_grade_level"/>
+                    <field name="date"/>
+                    <field name="end_date"/>
+                    <field name="acting"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="employee_promotion_rule_tree_view" model="ir.ui.view">
+            <field name="name">ng.state.payroll.promotion.rule.tree</field>
+            <field name="model">ng.state.payroll.promotion.rule</field>
+            <field name="arch" type="xml">
+                <tree string="Employee Promotion Rule">
+                    <field name="from_grade_level"/>
+                    <field name="to_grade_level"/>
+                    <field name="years_due"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record id="employee_disciplinary_form_view" model="ir.ui.view">
+            <field name="name">ng.state.payroll.disciplinary.form</field>
+            <field name="model">ng.state.payroll.disciplinary</field>
+            <field name="arch" type="xml">
+                <form string="Employee Disciplinary" version="9.0">
+                    <sheet>
+                        <header>
+                            <button name="disciplinary_signal_confirm" type="workflow" states="draft" string="Confirm" class="oe_highlight"/>
+                            <button name="disciplinary_signal_pending" type="workflow" states="confirm" string="Complete" class="oe_highlight"/>
+                            <button name="disciplinary_signal_cancel" type="workflow" states="confirm,pending" string="Cancel" class="oe_highlight"/>
+                            <field name="state" widget="statusbar"/>
+                        </header>
+                        <group>
+                            <group>
+                                <field name="employee_id"/>
+                                <field name="action_type"/>
+                                <field name="unpaid_suspension"/>
+                                <field name="date"/>
+                                <field name="end_date"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+       
+        <record id="employee_disciplinary_tree_view" model="ir.ui.view">
+            <field name="name">ng.state.payroll.disciplinary.tree</field>
+            <field name="model">ng.state.payroll.disciplinary</field>
+            <field name="arch" type="xml">
+                <tree string="Employee Disciplinary">
+                    <field name="employee_id"/>
+                    <field name="action_type"/>
+                    <field name="unpaid_suspension"/>
+                    <field name="date"/>
+                    <field name="end_date"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record id="employee_demise_form_view" model="ir.ui.view">
+            <field name="name">ng.state.payroll.demise.form</field>
+            <field name="model">ng.state.payroll.demise</field>
+            <field name="arch" type="xml">
+                <form string="Employee Demise" version="9.0">
+                    <sheet>
+                        <header>
+                            <button name="demise_signal_confirm" type="workflow" states="draft" string="Confirm" class="oe_highlight"/>
+                            <button name="demise_signal_pending" type="workflow" states="confirm" string="Complete" class="oe_highlight"/>
+                            <button name="demise_signal_cancel" type="workflow" states="confirm,pending" string="Cancel" class="oe_highlight"/>
+                            <field name="state" widget="statusbar"/>
+                        </header>
+                        <group>
+                            <group>
+                                <field name="employee_id"/>
+                                <field name="date"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+       
+        <record id="employee_demise_tree_view" model="ir.ui.view">
+            <field name="name">ng.state.payroll.demise.tree</field>
+            <field name="model">ng.state.payroll.demise</field>
+            <field name="arch" type="xml">
+                <tree string="Employee Demise">
+                    <field name="employee_id"/>
+                    <field name="date"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+         
+        <record id="employee_retirement_form_view" model="ir.ui.view">
+            <field name="name">ng.state.payroll.retirement.form</field>
+            <field name="model">ng.state.payroll.retirement</field>
+            <field name="arch" type="xml">
+                <form string="Employee Retirement" version="9.0">
+                    <sheet>
+                        <header>
+                            <button name="retirement_signal_confirm" type="workflow" states="draft" string="Confirm" class="oe_highlight"/>
+                            <button name="retirement_signal_pending" type="workflow" states="confirm" string="Complete" class="oe_highlight"/>
+                            <button name="retirement_signal_cancel" type="workflow" states="confirm,pending" string="Cancel" class="oe_highlight"/>
+                            <field name="state" widget="statusbar"/>
+                        </header>
+                        <group>
+                            <group>
+                                <field name="employee_id"/>
+                                <field name="date"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+       
+        <record id="employee_retirement_tree_view" model="ir.ui.view">
+            <field name="name">ng.state.payroll.retirement.tree</field>
+            <field name="model">ng.state.payroll.retirement</field>
+            <field name="arch" type="xml">
+                <tree string="Employee Retirement">
+                    <field name="employee_id"/>
+                    <field name="date"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+                              
+        <record id="open_employee_promotion" model="ir.actions.act_window">
+            <field name="name">Employee Promotion</field>
+            <field name="res_model">ng.state.payroll.promotion</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem id="menu_employee_promotion"
+            action="open_employee_promotion"
+            parent="hr.menu_hr_main"
+            sequence="140"/>                        
+        <record id="open_employee_disciplinary" model="ir.actions.act_window">
+            <field name="name">Employee Disciplinary</field>
+            <field name="res_model">ng.state.payroll.disciplinary</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem id="menu_employee_disciplinary"
+            action="open_employee_disciplinary"
+            parent="hr.menu_hr_main"
+            sequence="140"/>
+        <record id="open_employee_demise" model="ir.actions.act_window">
+            <field name="name">Employee Demise</field>
+            <field name="res_model">ng.state.payroll.demise</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem id="menu_employee_demise"
+            action="open_employee_demise"
+            parent="hr.menu_hr_main"
+            sequence="140"/>
+        <record id="open_employee_demise" model="ir.actions.act_window">
+            <field name="name">Employee Demise</field>
+            <field name="res_model">ng.state.payroll.demise</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem id="menu_employee_demise"
+            action="open_employee_demise"
+            parent="hr.menu_hr_main"
+            sequence="140"/>
+        <record id="open_employee_promotion_rule" model="ir.actions.act_window">
+            <field name="name">Employee Promotion Rule</field>
+            <field name="res_model">ng.state.payroll.promotion.rule</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem id="menu_employee_promotion_rule"
+            action="open_employee_promotion_rule"
+            parent="hr.menu_hr_main"
+            sequence="140"/>                        
+    </data>
+</openerp>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        
+        <record model="ir.cron" id="generate_payslips_cron">
+            <field name="name">Generate MDA Payslips</field>
+            <field eval="True" name="active" />
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">6</field>
+            <field name="interval_type">hours</field>
+            <field name="numbercall">-1</field>
+            <field eval="(DateTime.now() + timedelta(seconds=60)).strftime('%Y-%m-%d %H:%M:%S')" name="nextcall"/>
+            <field eval="False" name="doall"/>
+            <field eval="'ng.state.payroll.payroll'" name="model"/>
+            <field eval="'try_generate_mda_payslips'" name="function"/>
+            <field eval="'()'" name="args"/>
+        </record>
+        
+    </data>
+</openerp>

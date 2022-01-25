@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<openerp>
+    <data>
+        
+                <!-- Workflow Definition -->
+        <record id="wkf_increment" model="workflow">
+            <field name="name">ng.state.payroll.increment.basic</field>
+            <field name="osv">ng.state.payroll.increment</field>
+            <field name="on_create">True</field>
+        </record>
+        
+        <!-- Workflow Activities (States) -->
+        
+        <record id="increment_act_draft" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_increment"/>
+            <field name="name">draft</field>
+            <field name="kind">function</field>
+            <field name="action">write({'state': 'draft'})</field>
+            <field name="flow_start">True</field>
+        </record>
+        
+        <record id="increment_act_confirm" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_increment"/>
+            <field name="name">confirm</field>
+            <field name="kind">function</field>
+            <field name="action">write({'state': 'confirm'})</field>
+        </record>
+        
+        <record id="increment_act_pending" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_increment"/>
+            <field name="name">pending</field>
+            <field name="kind">function</field>
+            <field name="action">write({'state': 'pending'})</field>
+        </record>
+        
+        <record id="increment_act_done" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_increment"/>
+            <field name="name">done</field>
+            <field name="kind">function</field>
+            <field name="action">increment_state_done()</field>
+            <field name="flow_stop">True</field>
+        </record>
+        
+        <record id="increment_act_cancel" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_increment"/>
+            <field name="name">cancel</field>
+            <field name="kind">function</field>
+            <field name="action">write({'state': 'cancel'})</field>
+            <field name="flow_stop">True</field>
+        </record>
+        
+        <!-- Workflow Transitions -->
+        
+        <record id="increment_draft2confirm" model="workflow.transition">
+            <field name="act_from" ref="increment_act_draft"/>
+            <field name="act_to" ref="increment_act_confirm"/>
+            <field name="signal">increment_signal_confirm</field>
+            <field name="group_id" ref="base.group_hr_manager"/>
+        </record>
+        
+        <record id="increment_confirm2pending" model="workflow.transition">
+            <field name="act_from" ref="increment_act_confirm"/>
+            <field name="act_to" ref="increment_act_pending"/>
+            <field name="condition">not effective_date_in_future()</field>
+            <field name="signal">increment_signal_pending</field>
+            <field name="group_id" ref="base.group_hr_manager"/>
+        </record>
+        
+        <record id="increment_confirm2done" model="workflow.transition">
+            <field name="act_from" ref="increment_act_confirm"/>
+            <field name="act_to" ref="increment_act_done"/>
+            <field name="condition">not effective_date_in_future()</field>
+            <field name="signal">increment_signal_pending</field>
+            <field name="group_id" ref="base.group_hr_manager"/>
+        </record>
+        
+        <record id="increment_confirm2cancel" model="workflow.transition">
+            <field name="act_from" ref="increment_act_confirm"/>
+            <field name="act_to" ref="increment_act_cancel"/>
+            <field name="signal">increment_signal_cancel</field>
+            <field name="group_id" ref="base.group_hr_manager"/>
+        </record>
+        
+        <record id="increment_pending2done" model="workflow.transition">
+            <field name="act_from" ref="increment_act_pending"/>
+            <field name="act_to" ref="increment_act_done"/>
+            <field name="condition">not effective_date_in_future()</field>
+            <field name="signal">increment_signal_done</field>
+            <field name="group_id" ref="base.group_hr_manager"/>
+        </record>
+        
+        <record id="increment_pending2cancel" model="workflow.transition">
+            <field name="act_from" ref="increment_act_pending"/>
+            <field name="act_to" ref="increment_act_cancel"/>
+            <field name="signal">increment_signal_cancel</field>
+            <field name="group_id" ref="base.group_hr_manager"/>
+        </record>
+
+    </data>
+</openerp>

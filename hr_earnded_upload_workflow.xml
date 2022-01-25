@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<openerp>
+    <data>
+        
+                <!-- Workflow Definition -->
+        <record id="wkf_earnded_upload" model="workflow">
+            <field name="name">ng.state.payroll.earnded.upload.basic</field>
+            <field name="osv">ng.state.payroll.earnded.upload</field>
+            <field name="on_create">True</field>
+        </record>
+        
+        <!-- Workflow Activities (States) -->
+        
+        <record id="earnded_upload_act_draft" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_earnded_upload"/>
+            <field name="name">draft</field>
+            <field name="kind">function</field>
+            <field name="action">write({'state': 'draft'})</field>
+            <field name="flow_start">True</field>
+        </record>
+        
+        <record id="earnded_upload_act_confirm" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_earnded_upload"/>
+            <field name="name">confirm</field>
+            <field name="kind">function</field>
+            <field name="action">earnded_upload_state_confirm()</field>
+        </record>
+        
+        <record id="earnded_upload_act_done" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_earnded_upload"/>
+            <field name="name">done</field>
+            <field name="kind">function</field>
+            <field name="action">earnded_upload_state_done()</field>
+            <field name="flow_stop">True</field>
+        </record>
+        
+        <record id="earnded_upload_act_cancel" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_earnded_upload"/>
+            <field name="name">cancel</field>
+            <field name="kind">function</field>
+            <field name="action">write({'state': 'cancel'})</field>
+            <field name="flow_stop">True</field>
+        </record>
+        
+        <!-- Workflow Transitions -->
+        
+        <record id="earnded_upload_draft2confirm" model="workflow.transition">
+            <field name="act_from" ref="earnded_upload_act_draft"/>
+            <field name="act_to" ref="earnded_upload_act_confirm"/>
+            <field name="signal">earnded_upload_signal_confirm</field>
+            <field name="group_id" ref="hr_payroll_nigerian_state.group_payroll_administrator"/>
+        </record>
+        
+        <record id="earnded_upload_confirm2done" model="workflow.transition">
+            <field name="act_from" ref="earnded_upload_act_confirm"/>
+            <field name="act_to" ref="earnded_upload_act_done"/>
+            <field name="condition">not effective_date_in_future()</field>
+            <field name="signal">earnded_upload_signal_pending</field>
+            <field name="group_id" ref="hr_payroll_nigerian_state.group_payroll_administrator"/>
+        </record>
+        
+        <record id="earnded_upload_confirm2cancel" model="workflow.transition">
+            <field name="act_from" ref="earnded_upload_act_confirm"/>
+            <field name="act_to" ref="earnded_upload_act_cancel"/>
+            <field name="signal">earnded_upload_signal_cancel</field>
+            <field name="group_id" ref="hr_payroll_nigerian_state.group_payroll_administrator"/>
+        </record>
+
+    </data>
+</openerp>

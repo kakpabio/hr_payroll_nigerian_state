@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+       
+       <report
+            id="payroll_exec_summary_xlsx"
+            model="ng.state.payroll.payroll"
+            string="Full Wagebill Final Summary - MDA/UNIOSUNTH"
+            report_type="xlsx"
+            name="payroll.exec.summary.xlsx"
+            file="payroll.exec.summary.xlsx"
+            attachment_use="False"
+        />
+         
+
+       
+       <report
+            id="payroll_exec_summary2_xlsx"
+            model="ng.state.payroll.payroll"
+            string="Full Wagebill Final Summary - HIGH SCHOOL"
+            report_type="xlsx"
+            name="payroll.exec.summary2.xlsx"
+            file="payroll.exec.summary2.xlsx"
+            attachment_use="False"
+        />
+
+         <report
+            id="payroll_exec_summary3_xlsx"
+            model="ng.state.payroll.payroll"
+            string="Full Wagebill Final Summary - LGA"
+            report_type="xlsx"
+            name="payroll.exec.summary3.xlsx"
+            file="payroll.exec.summary3.xlsx"
+            attachment_use="False"
+        />
+
+        <report
+            id="payroll_exec_summary_phc_xlsx"
+            model="ng.state.payroll.payroll"
+            string="Full Wagebill Final Summary - PHC"
+            report_type="xlsx"
+            name="payroll.exec.summary_phc.xlsx"
+            file="payroll.exec.summary_phc.xlsx"
+            attachment_use="False"
+        />
+
+        <report
+            id="payroll_exec_summary5_xlsx"
+            model="ng.state.payroll.payroll"
+            string="Full Wagebill Final Summary - SUBEB"
+            report_type="xlsx"
+            name="payroll.exec.summary5.xlsx"
+            file="payroll.exec.summary5.xlsx"
+            attachment_use="False"
+        />
+
+        <report
+            id="payroll_exec_summary6_xlsx"
+            model="ng.state.payroll.payroll"
+            string="Full Wagebill Final Summary - MIDDLE"
+            report_type="xlsx"
+            name="payroll.exec.summary6.xlsx"
+            file="payroll.exec.summary6.xlsx"
+            attachment_use="False"
+        />
+       
+       <report
+            id="pension_exec_summary_xlsx"
+            model="ng.state.payroll.payroll"
+            string="Pension Executive Summary"
+            report_type="xlsx"
+            name="pension.exec.summary.xlsx"
+            file="pension.exec.summary.xlsx"
+            attachment_use="False"
+        />
+        
+         
+        <report
+            id="payroll_item_xlsx"
+            model="ng.state.payroll.payroll"
+            string="Payroll Report"
+            report_type="xlsx"
+            name="payroll.item.xlsx"
+            file="payroll.item.xlsx"
+            attachment_use="False"
+        />
+        
+        <report
+            id="payroll_paye_xlsx"
+            model="ng.state.payroll.payroll"
+            string="PAYE Report"
+            report_type="xlsx"
+            name="payroll.paye.xlsx"
+            file="payroll.paye.xlsx"
+            attachment_use="False"
+        />
+
+        <report
+            id="payroll_all_xlsx"
+            model="ng.state.payroll.payroll"
+            string="Departments Report"
+            report_type="xlsx"
+            name="payroll.all.xlsx"
+            file="payroll.all.xlsx"
+            attachment_use="False"
+        />
+
+        <report
+            id="payroll_leavebonus_xlsx"
+            model="ng.state.payroll.payroll"
+            string="Leave Allowance Report"
+            report_type="xlsx"
+            name="payroll.leavebonus.xlsx"
+            file="payroll.leavebonus.xlsx"
+            attachment_use="False"
+        />
+
+        <report
+            id="payroll_tescom_xlsx"
+            model="ng.state.payroll.payroll"
+            string="TESCOM Final Report"
+            report_type="xlsx"
+            name="payroll.tescom.xlsx"
+            file="payroll.tescom.xlsx"
+            attachment_use="False"
+        />
+
+        <report
+            id="payroll_tescom_school_xlsx"
+            model="ng.state.payroll.payroll"
+            string="TESCOM School Report"
+            report_type="xlsx"
+            name="payroll.tescom.school.xlsx"
+            file="payroll.tescom.school.xlsx"
+            attachment_use="False"
+        />
+
+        <report
+            id="payroll_mda_xlsx"
+            model="ng.state.payroll.payroll"
+            string="Final Report"
+            report_type="xlsx"
+            name="payroll.mda.xlsx"
+            file="payroll.mda.xlsx"
+            attachment_use="False"
+        />
+
+        <report
+            id="payroll_deduction_xlsx"
+            model="ng.state.payroll.payroll"
+            string="Deduction Report"
+            report_type="xlsx"
+            name="payroll.deduction.xlsx"
+            file="payroll.deduction.xlsx"
+            attachment_use="False"
+        />
+
+        <report
+            id="payroll_deduction_head_xlsx"
+            model="ng.state.payroll.payroll"
+            string="Deduction Head Report"
+            report_type="xlsx"
+            name="payroll.deduction.head.xlsx"
+            file="payroll.deduction.head.xlsx"
+            attachment_use="False"
+        />
+
+        <report
+            id="payroll_summarized_xlsx"
+            model="ng.state.payroll.payroll"
+            string="Summarized Report"
+            report_type="xlsx"
+            name="payroll.summarized.xlsx"
+            file="payroll.summarized.xlsx"
+            attachment_use="False"
+        />
+
+        <report
+            id="pension_mda_xlsx"
+            model="ng.state.payroll.payroll"
+            string="Contributary Pension Report"
+            report_type="xlsx"
+            name="pension.mda.xlsx"
+            file="pension.mda.xlsx"
+            attachment_use="False"
+        />
+        
+        <report
+            id="pension_item_xlsx"
+            model="ng.state.payroll.payroll"
+            string="Pensioners Report"
+            report_type="xlsx"
+            name="pension.item.xlsx"
+            file="pension.item.xlsx"
+            attachment_use="False"
+        />
+
+        <report
+            id="pension_tco_xlsx"
+            model="ng.state.payroll.payroll"
+            string="Pension TCO Report"
+            report_type="xlsx"
+            name="pension.tco.xlsx"
+            file="pension.tco.xlsx"
+            attachment_use="False"
+        />
+
+        <report
+            id="payment_item_xlsx"
+            model="ng.state.payroll.scenario"
+            string="Payment Employee Report"
+            report_type="xlsx"
+            name="payment.item.xlsx"
+            file="payment.item.xlsx"
+            attachment_use="False"
+        />
+
+        <report
+            id="payment_nibbs_xlsx"
+            model="ng.state.payroll.scenario"
+            string="Payment NIBBS Report"
+            report_type="xlsx"
+            name="payment.nibbs.xlsx"
+            file="payment.nibbs.xlsx"
+            attachment_use="False"
+        />
+
+        <report
+            id="payment_exec_summary_xlsx"
+            model="ng.state.payroll.scenario"
+            string="Modulated Wagebill Final Summary"
+            report_type="xlsx"
+            name="payment.exec.summary.xlsx"
+            file="payment.exec.summary.xlsx"
+            attachment_use="False"
+        />
+
+        <report
+            id="deduction_nibbs_xlsx"
+            model="ng.state.payroll.scenario"
+            string="Deduction NIBBS Report"
+            report_type="xlsx"
+            name="deduction.nibbs.xlsx"
+            file="deduction.nibbs.xlsx"
+            attachment_use="False"
+        />
+       
+</data>
+</openerp>

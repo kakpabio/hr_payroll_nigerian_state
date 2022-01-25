@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        
+        <!-- Main template -->
+        <template id="payroll_summary_report">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="hr_payroll_nigerian_state.payroll_summary_report_document"/>
+                </t>
+            </t>
+        </template>
+        
+        <!-- Translatable template -->            
+        <template id="payroll_summary_report_document">
+                
+                    <t t-call="report.external_layout">
+                        <div class="page">
+                            <div class="oe_structure"/>
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <br/>
+                                    <br/>                                
+                                    <h2><strong>Final Monthly Payroll Report</strong></h2>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div t-if="doc.name" class="col-xs-12">
+                                    <u><h3><strong><span t-field="doc.name"/> (<span t-field="doc.calendar_id.name"/>)</strong></h3></u>
+                                </div>
+                            </div>                                         
+                            <div t-if="doc.do_payroll" class="row">
+                                <div class="col-xs-12">
+                                    <div class="row">
+                                        <div class="col-xs-12"><h4><strong>PAYROLL</strong></h4></div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-4 border">
+                                            <h5><strong>Total Gross:</strong></h5>
+                                        </div>
+                                        <div class="col-xs-4 text-right border">
+                                            <h5><span t-esc="'{:,.2f}'.format(doc.total_gross_payroll)"/></h5>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-4 border">
+                                            <h5><strong>Total Net:</strong></h5>
+                                        </div>
+                                        <div class="col-xs-4 text-right border">
+                                            <h5><span t-esc="'{:,.2f}'.format(doc.total_net_payroll)"/></h5>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-4 border">
+                                            <h5><strong>Total Taxable:</strong></h5>
+                                        </div>
+                                        <div class="col-xs-4 text-right border">
+                                            <h5><span t-esc="'{:,.2f}'.format(doc.total_taxable_payroll)"/></h5>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-4 border">
+                                            <h5><strong>Total Tax:</strong></h5>
+                                        </div>
+                                        <div class="col-xs-4 text-right border">
+                                            <h5><span t-esc="'{:,.2f}'.format(doc.total_tax_payroll)"/></h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>                            
+                            <div t-if="doc.do_pension" class="row">
+                                <div class="col-xs-12">
+                                    <div class="row">
+                                        <div class="col-xs-12"><h4><strong>PENSION</strong></h4></div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-6 border">
+                                            <h5><strong>Total Gross:</strong></h5>
+                                        </div>
+                                        <div class="col-xs-6 text-right border">
+                                            <h5><span t-esc="'{:,.2f}'.format(doc.total_gross_pension)"/></h5>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-6 border">
+                                            <h5><strong>Total Net:</strong></h5>
+                                        </div>
+                                        <div class="col-xs-6 text-right border">
+                                            <h5><span t-esc="'{:,.2f}'.format(doc.total_net_pension)"/></h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>                            
+                            <div t-if="doc.payroll_summary_ids" class="row">
+                                <div class="col-xs-12">
+                                    <div class="row">
+                                        <div class="col-xs-4 border">
+                                            <h5><strong>Department</strong></h5>
+                                        </div>                            
+                                        <div class="col-xs-2 border">
+                                            <h5><strong>Total Gross</strong></h5>
+                                        </div>                            
+                                        <div class="col-xs-2 border">
+                                            <h5><strong>Total Net</strong></h5>
+                                        </div>                            
+                                        <div class="col-xs-2 border">
+                                            <h5><strong>Total Taxable</strong></h5>
+                                        </div>                            
+                                        <div class="col-xs-2 border">
+                                            <h5><strong>Total PAYE</strong></h5>
+                                        </div>                            
+                                    </div>                            
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <t t-foreach="doc.payroll_summary_ids" t-as="summary">
+                                                <div class="row">
+                                                    <div class="col-xs-4 border">
+                                                        <span style="font-size:10px" t-field="summary.department_id.name"/>
+                                                    </div>                            
+                                                    <div class="col-xs-2 text-right border">
+                                                        <span style="font-size:10px" t-esc="'{:,.2f}'.format(summary.total_gross_income)"/>
+                                                    </div>                            
+                                                    <div class="col-xs-2 text-right border">
+                                                        <span style="font-size:10px" t-esc="'{:,.2f}'.format(summary.total_net_income)"/>
+                                                    </div>                            
+                                                    <div class="col-xs-2 text-right border">
+                                                        <span style="font-size:10px" t-esc="'{:,.2f}'.format(summary.total_taxable_income)"/>
+                                                    </div>                            
+                                                    <div class="col-xs-2 text-right border">
+                                                        <span style="font-size:10px" t-esc="'{:,.2f}'.format(summary.total_paye_tax)"/>
+                                                    </div>                            
+                                                </div>                            
+                                            </t>                                
+                                        </div>                            
+                                    </div>
+                                </div>
+                            </div>                            
+                            <div style="page-break-before: always;">
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <div class="row">
+                                    <div t-if="doc.ps_finance_sign" class="col-xs-6">
+                                        <table>
+                                            <tr>
+                                                <td><span t-field="doc.ps_finance_sign" t-field-options='{"widget": "image"}'/><br/><hr style="border-top: 2px dashed black"/></td>    
+                                            </tr>
+                                            <tr>
+                                                <td><strong><h5>PS Finance Signature</h5></strong></td>    
+                                            </tr>
+                                        </table>
+                                    </div>                        
+                                    <div t-if="doc.gov_sign" class="col-xs-6">
+                                        <table>
+                                            <tr>
+                                                <td><span t-field="doc.gov_sign" t-field-options='{"widget": "image"}'/><br/><hr style="border-top: 2px dashed black"/></td>    
+                                            </tr>
+                                            <tr>
+                                                <td><strong><h5>His Excellency Signature</h5></strong></td>    
+                                            </tr>
+                                        </table>
+                                    </div>                        
+                                </div>                                                      
+                            </div>                            
+                      <div class="oe_structure"/>                     
+                        </div>
+                    </t>
+      
+        </template>     
+    </data>
+</openerp>
