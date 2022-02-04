@@ -882,8 +882,8 @@ class ng_state_payroll_payscheme(models.Model):
     _columns = {
         'name': fields.char('Name', help='Pay Scheme', required=True),
         'active': fields.boolean('Active', help='Active Status', required=False),
-        'use_dob': fields.boolean('Use DofB', help='Use birth date for retirement date computation', required=True),
-        'use_dofa': fields.boolean('Use DofA', help='Use appointment date for retirement date computation', required=True),
+        'use_dob': fields.boolean('Use DofB', help='Use birth date for retirement date computation', required=False),
+        'use_dofa': fields.boolean('Use DofA', help='Use appointment date for retirement date computation', required=False),
         'retirement_age': fields.integer('Retirement Age', help='Expected retirement age', required=True),
         'service_years': fields.integer('Service Years', help='Number of years at which retirement is due', required=True),
         'employee_category': fields.selection([
@@ -896,8 +896,6 @@ class ng_state_payroll_payscheme(models.Model):
 
     _defaults = {
         'active': True,
-        'use_dob': True,
-        'use_dofa': True,
         'employee_category': 'public',
     }             
 
@@ -914,11 +912,11 @@ class ng_state_payroll_payscheme(models.Model):
             retirement_date_dob = False
             retirement_index = False
             if emp.payscheme_id.use_dofa:
-                retirement_date_dofa = datetime.strptime(emp.hire_date, DEFAULT_SERVER_DATE_FORMAT) + relativedelta(years=emp.payscheme_id.service_years) - relativedelta(days=1)
+                retirement_date_dofa = datetime.strptime(emp.hire_date, DEFAULT_SERVER_DATE_FORMAT) + relativedelta(years=emp.payscheme_id.service_years)
                 retirement_date = retirement_date_dofa
                 retirement_index = 'dofa'
             if emp.payscheme_id.use_dob:
-                retirement_date_dob = datetime.strptime(emp.birthday, DEFAULT_SERVER_DATE_FORMAT) + relativedelta(years=emp.payscheme_id.retirement_age) - timedelta(days=1)
+                retirement_date_dob = datetime.strptime(emp.birthday, DEFAULT_SERVER_DATE_FORMAT) + relativedelta(years=emp.payscheme_id.retirement_age)
                 retirement_date = retirement_date_dob
                 retirement_index = 'dofb'
             if emp.payscheme_id.use_dofa and emp.payscheme_id.use_dob:
@@ -5701,6 +5699,15 @@ class ng_state_payroll_payroll(models.Model):
 #             self.env.cr.execute("delete from ng_state_payroll_dashboard where payroll_id=" + str(p_obj.id))
             self.env.cr.execute("delete from ng_state_payroll_loan_payment where payroll_id=" + str(p_obj.id))
             self.env.cr.execute("delete from ng_state_payroll_payroll where id=" + str(p_obj.id))
+
+            #delete entries in payroll paid dedearnings table 
+            self.env.cr.execute("delete from ng_state_payroll_paid_dedearning where payroll_id=" + str(p_obj.id))
+            self.env.cr.commit()
+
+            #delete entries in payroll paid leave bonus table 
+            self.env.cr.execute("delete from ng_state_payroll_paid_leavebonus where payroll_id=" + str(p_obj.id))
+            self.env.cr.commit()
+           
         self.env.invalidate_all()
         
     @api.model
@@ -5793,6 +5800,10 @@ class ng_state_payroll_payroll(models.Model):
             
             #delete entries in payroll paid dedearnings table 
             self.env.cr.execute("delete from ng_state_payroll_paid_dedearning where payroll_id=" + str(self.id))
+            self.env.cr.commit()
+
+            #delete entries in payroll paid leave bonus table 
+            self.env.cr.execute("delete from ng_state_payroll_paid_leavebonus where payroll_id=" + str(self.id))
             self.env.cr.commit()
            
         if self.do_pension:
@@ -6229,9 +6240,10 @@ class ng_state_payroll_payroll(models.Model):
                                     item_line_retiring = 'f'
                                     _logger.info('ogo ILR')
                                 if retirement_date and is_active:
-                                    retirement_date=datetime.strptime(emp.hire_date, DEFAULT_SERVER_DATE_FORMAT)-timedelta(days=1)
+                                    retirement_date=datetime.strptime(emp.hire_date, DEFAULT_SERVER_DATE_FORMAT)
                                     item_line_retiring = 't'
                                     _logger.info("Retirement Date=%s ogo B- kp modified ret date", retirement_date)
+                                    _logger.info("EMP IS RETIRING =%s ", str(emp.id))
                                     #_logger2.info("Retirement Day=%s", retirement_date.day)
                                     #_logger2.info("Retirement Month=%s", retirement_date.month)
                                     #_logger2.info("Retirement Year=%s", retirement_date.year)
@@ -6441,8 +6453,10 @@ class ng_state_payroll_payroll(models.Model):
                             paid_bonus_this_yr=self.env.cr.fetchone() 
 
                             if not paid_bonus_this_yr:
+                                _logger.info("NOT PAID "+str(emp.id))
                                 #If at least 6 months worked
                                 if emp.birthday and months_worked >= 6:
+                                    _logger.info("NOT PAID BUT WORKED SINCE MONTH "+str(emp.id))
                                     if leave_allowance and basic_salary:
                                         if len(leave_allowance) > 1:
                                             leave_allowance_filtered = leave_allowance.filtered(lambda r: r.paygrade_id.id == emp.level_id_leave_allowance.paygrade_id.id)
@@ -6467,7 +6481,11 @@ class ng_state_payroll_payroll(models.Model):
                                                    item_line_leave = (basic_salary.amount + house_rent.amount) * leave_allowance[0].percentage / 100
                                             item_line_income += item_line_leave
                                         #_logger2.info("Leave Allowance=%f", item_line_leave)
-                                                   
+                                 
+                                _logger.info("MONTHS WORKED "+str(months_worked))
+                                _logger.info("Birthday "+str(emp.birthday))
+                                _logger.info("Birthday Month "+str(birth_month))
+                                _logger.info("Pay Month "+str(pay_month))                  
                                 
                                 if (emp.birthday and months_worked >= 6 and int(pay_month) == int(birth_month)) or (item_line_retiring == 't' and int(birth_month) > int(pay_month)):
                                     actual_leave_allowance = item_line_leave
@@ -6653,7 +6671,7 @@ class ng_state_payroll_payroll(models.Model):
                                         nonstd_ded_amount = e.derived_from.amount * e.amount / 1200.0
                                     if e.name != 'PAYE':
                                         self.env.cr.execute('execute insert_item_line(%s,%s,%s)', (item_id[0],'OTHER DEDUCTIONS - ' + e.name,-nonstd_ded_amount))
-                                for e in loans:
+                                for l in loans:
                                     self.env.cr.execute('execute insert_item_line(%s,%s,%s)', (item_id[0],'OTHER DEDUCTIONS - ' + l.name,-l.payment_amount))
                                     
                             #When an employee has been reinstated in this calendar period,- 
@@ -7177,7 +7195,7 @@ class ng_state_payroll_payroll(models.Model):
                                 retirement_date_dofa = datetime.strptime(emp.hire_date, DEFAULT_SERVER_DATE_FORMAT) + relativedelta(years=emp.payscheme_id.service_years) 
                                 retirement_date = retirement_date_dofa
                             if emp.payscheme_id.use_dob:
-                                retirement_date_dob = datetime.strptime(emp.birthday, DEFAULT_SERVER_DATE_FORMAT) + relativedelta(years=emp.payscheme_id.retirement_age) - timedelta(days=1)
+                                retirement_date_dob = datetime.strptime(emp.birthday, DEFAULT_SERVER_DATE_FORMAT) + relativedelta(years=emp.payscheme_id.retirement_age)
                                 retirement_date = retirement_date_dob
                             if emp.payscheme_id.use_dofa and emp.payscheme_id.use_dob:
                                 if retirement_date_dofa < retirement_date_dob:
@@ -7900,9 +7918,9 @@ class ng_state_payroll_disciplinary(models.Model):
         data = employee_obj.read(
             cr, uid, disciplinary_id[0].employee_id.id, ['state', 'retirement_due_date'], context=context) 
         if data.get('retirement_due_date', False) and data['retirement_due_date'] != '':
-            retirementDate = datetime.strptime(
+            retirementDate = datetime.strpptime(
                 data['retirement_due_date'], DEFAULT_SERVER_DATE_FORMAT)
-            dEffective = datetime.strptime(
+            dEffective = datetime.strpptime(
                 effective_date, DEFAULT_SERVER_DATE_FORMAT)
             if dEffective >= retirementDate:
                 disciplinary_obj.write(cr, uid, disc_id, {'error_msg': 'Effective Date cannot be after Retirement Due Date.'}, context=context)
@@ -8982,21 +9000,21 @@ class ng_state_payroll_retirement(models.Model):
     def try_init_due_retirements(self, cr, uid, context=None):
         _logger.info("Running try_init_due_retirements cron-job...")
         employee_obj = self.pool.get('hr.employee')
-        employee_ids = employee_obj.search(cr, uid, [('active', '=', True), ('retirement_due_date', '=', False), '|', ('status_id.name', '=', 'ACTIVE'), ('status_id.name', '=', 'SUSPENDED')], order='id', context=context)
-        _logger.info("try_init_due_retirements - employees=%d", len(employee_ids))
+        employee_ids = employee_obj.search(cr, uid, [('active', '=', True), ('retirement_due_date', '=', False),'|', ('status_id.name', '=', 'ACTIVE'), ('status_id.name', '=', 'SUSPENDED')], order='id', context=context)
 
-        for emp in employee_obj.browse(cr, uid, employee_ids, context=context):                          
+        for emp in employee_obj.browse(cr, uid, employee_ids, context=context): 
+            _logger.info("EMP TO SET RET DUE DATE "+emp.name_related)                         
             #Use hire date and date of birth to calculate retirement date
             retirement_date = False
             retirement_date_dofa = False
             retirement_date_dob = False
             retirement_index = False
             if emp.payscheme_id.use_dofa and emp.hire_date:
-                retirement_date_dofa = datetime.strptime(emp.hire_date, DEFAULT_SERVER_DATE_FORMAT) + relativedelta(years=emp.payscheme_id.service_years) - relativedelta(days=1)
+                retirement_date_dofa = datetime.strptime(emp.hire_date, DEFAULT_SERVER_DATE_FORMAT) + relativedelta(years=emp.payscheme_id.service_years)
                 retirement_date = retirement_date_dofa
                 retirement_index = 'dofa'
             if emp.payscheme_id.use_dob and emp.birthday:
-                retirement_date_dob = datetime.strptime(emp.birthday, DEFAULT_SERVER_DATE_FORMAT) + relativedelta(years=emp.payscheme_id.retirement_age) - timedelta(days=1)
+                retirement_date_dob = datetime.strptime(emp.birthday, DEFAULT_SERVER_DATE_FORMAT) + relativedelta(years=emp.payscheme_id.retirement_age)
                 retirement_date = retirement_date_dob
                 retirement_index = 'dofb'
             if emp.payscheme_id.use_dofa and emp.payscheme_id.use_dob:
@@ -9008,6 +9026,7 @@ class ng_state_payroll_retirement(models.Model):
                     retirement_index = 'dofb'
             if retirement_date:
                 cr.execute("update hr_employee set retirement_due_date='" + retirement_date.strftime(DEFAULT_SERVER_DATE_FORMAT) + "',retirement_index='" + retirement_index + "' where id=" + str(emp.id))
+                _logger.info("AFT SET EMP TO SET RET DUE DATE "+emp.name_related)  
             else:
                 cr.execute("update hr_employee set retirement_due_date='3000-01-01' where id=" + str(emp.id))
         cr.commit()
@@ -9028,10 +9047,11 @@ class ng_state_payroll_retirement(models.Model):
         for emp in employee_obj.browse(cr, uid, employee_ids, context=context):                          
             retirement_id = retirement_obj.create(cr, uid, {
                 'employee_id':emp.id,
+                'state':'pending',
                 'retirement_type':'auto',
                 'date':today.strftime(DEFAULT_SERVER_DATE_FORMAT),
             }, context=context)
-            self.retirement_state_confirm(cr, uid, retirement_id, context=context)
+            self.retirement_state_done(cr, uid, retirement_id, context=context)
         cr.commit()
         return True
                 
@@ -9516,6 +9536,7 @@ class ng_state_payroll_changereq(models.Model):
             ).date() <= today and o.state == 'pending':
                 if self._check_state(cr, uid, o.employee_id.id, o.date, context=context):
                     emp_dict = {}
+                    _logger.info('inside for o in browse')
                     emp_dict.update({'active':o.active_flag})
                     if o.employee_no:
                         emp_dict.update({'employee_no':o.employee_no})
@@ -9532,22 +9553,28 @@ class ng_state_payroll_changereq(models.Model):
                     if o.bank_account_no:
                         emp_dict.update({'bank_account_no':o.bank_account_no})
                     if o.hire_date or o.birthday:
+                        if o.birthday:
+                            _logger.info("Updated DOB KP "+str(o.birthday))                          
                         if o.hire_date:
                             emp_dict.update({'hire_date':o.hire_date})
                         if o.birthday:
-                            emp_dict.update({'birthday':o.birthday})
+                            emp_dict.update({'birthday':o.birthday}); _logger.info('change DOB big vic')
             
                         retirement_date = False
                         retirement_date_dofa = False
                         retirement_date_dob = False
                         retirement_index = False
-                        if o.employee_id.payscheme_id.use_dofa and o.employee_id.hire_date:
-                            retirement_date_dofa = datetime.strptime(o.employee_id.hire_date, DEFAULT_SERVER_DATE_FORMAT) + relativedelta(years=o.employee_id.payscheme_id.service_years) 
+                        _logger.info('Before emp id:')
+                        _logger.info('emp id id: %s' % o.employee_id.id)
+                        _logger.info('emp id: %s' % o.employee_id.name_related)
+                        _logger.info('payscheme id: %s' % o.employee_id.payscheme_id.name)
+                        if o.employee_id.payscheme_id.use_dofa and o.hire_date:
+                            retirement_date_dofa = datetime.strptime(o.hire_date, DEFAULT_SERVER_DATE_FORMAT) + relativedelta(years=o.employee_id.payscheme_id.service_years)-timedelta(days=1)
                             retirement_date = retirement_date_dofa
                             retirement_index = 'dofa'
                             _logger.info("Use DofA = " + str(retirement_date))
-                        if o.employee_id.payscheme_id.use_dob and o.employee_id.birthday:
-                            retirement_date_dob = datetime.strptime(o.employee_id.birthday, DEFAULT_SERVER_DATE_FORMAT) + relativedelta(years=o.employee_id.payscheme_id.retirement_age) - timedelta(days=1)
+                        if o.employee_id.payscheme_id.use_dob and o.birthday:
+                            retirement_date_dob = datetime.strptime(o.birthday, DEFAULT_SERVER_DATE_FORMAT) + relativedelta(years=o.employee_id.payscheme_id.retirement_age)-timedelta(days=1)
                             retirement_date = retirement_date_dob
                             retirement_index = 'dofb'
                             _logger.info("Use DofB = " + str(retirement_date))
@@ -9559,10 +9586,14 @@ class ng_state_payroll_changereq(models.Model):
                                 else:
                                     retirement_date = retirement_date_dob
                                     retirement_index = 'dofb'
+                                _logger.info("Use DofB and DofA  and Ret " + str(retirement_date))
                         if retirement_date:
-                           cr.execute("update hr_employee set retirement_due_date='" + retirement_date.strftime(DEFAULT_SERVER_DATE_FORMAT) + "',retirement_index='" + retirement_index + "' where id=" + str(o.employee_id.id))      
-                           cr.commit()
-                           _logger.info("Use DofA & DofB ogo change req= ogo E" + str(retirement_date))
+                           emp_dict.update({'retirement_due_date':retirement_date})
+                           emp_dict.update({'retirement_index':retirement_index})  
+                           _logger.info("Retirement date updated ") # + str(retirement_date)+"//"+str(o.employee_id.employee_no))
+                        else:
+                            _logger.info("Retirement Date not set")
+                            #retirement_date.strftime(DEFAULT_SERVER_DATE_FORMAT)
                     if retirement_date:
                         emp_dict.update({'retirement_due_date':retirement_date})
                         emp_dict.update({'retirement_index':retirement_index})                    
