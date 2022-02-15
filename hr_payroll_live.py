@@ -3816,6 +3816,14 @@ class ng_state_payroll_earnded_upload(models.Model):
         'deduction': fields.boolean('Deduction Upload', help='Records are deductions when true or earnings when false'),
         'is_monthly': fields.boolean('Monthly', help='To be applied monthly for set duration'),
         'arrears': fields.boolean('Arrears', help='Records are arrears'),
+        'dedarrears': fields.selection([
+          ('deduction','Deductions'),
+          ('arrears','Arrears'),
+        ], 'Arrears/Deductions'),
+        'perm_mon':fields.selection([
+          ('is_monthly', 'Monthly'),
+          ('permanent','Permanent'),
+        ], 'Monthly/Permanent'),
         'state': fields.selection([
             ('draft', 'Draft'),
             ('confirm', 'Confirmed'),
@@ -3913,6 +3921,13 @@ class ng_state_payroll_earnded_upload(models.Model):
             self.env.cr.execute("delete from rel_upload_std_deduction where upload_id=" + str(self.id))
         self.env.invalidate_all()
 
+    def try_cancelled_actions(self, cr, uid, context=None):
+        _logger.info('Running try_cancelled_actions cron job...')
+        for record in self:
+            cons = record.search(cr, uid, [('state','=','confirm')], context=context)
+            if cons:
+                cons.write({'state': 'cancel'})
+
     def try_confirmed_earnded_upload_actions(self, cr, uid, context=None):
         _logger.info("Running try_confirmed_earnded_upload_actions cron-job...")
         employee_obj = self.pool.get('hr.employee')
@@ -3984,13 +3999,15 @@ class ng_state_payroll_earnded_upload(models.Model):
                                         if employee_id and len(employee_id) == 1 and (len(data_row) == 4 or len(data_row) == 5):
                                             description = data_row[1]
                                             amount = str(data_row[2]).strip().replace(',','').replace(' ','')
+                                            derived_from = data_row[3].strip()
                                             #added number of months as excel 4th column to process
                                             number_of_months = data_row[4]
                                             if upload.arrears:
                                                 description = 'ARREARS - ' + description
+                                                upload.arrears = True
                                             if upload.deduction:
                                                 derived_earning = False
-                                                if len(data_row) == 5:
+                                                if len(data_row) == 4:
                                                     # Select statement should also filter using employee's grade level
                                                     cr.execute("select id,amount from ng_state_payroll_earning_standard where level_id=" + str(employee[0].level_id.id) + " and name='" + str(data_row[3]).strip().replace("'", "") + "'")
                                                     derived_earning_id = cr.fetchall()
@@ -4003,6 +4020,7 @@ class ng_state_payroll_earnded_upload(models.Model):
                                                         if not(is_number(amount) and float(amount) > 0.0):                            
                                                             exception_list.append({'employee_no':data_row[0],'description':'','amount':amount,'derived_from':data_row[3],'number_of_months':data_row[4],'error':'Amount should be greater than 0.0: ' + amount})
                                                             exec_inserts = False
+                                                        #derived_earning = derived_from
                                                 relief = 'f'
                                                 if str(data_row[1]).upper().startswith('NHF') or str(data_row[1]).upper().startswith('PENSION'):
                                                     relief = 't'
@@ -4045,7 +4063,7 @@ class ng_state_payroll_earnded_upload(models.Model):
                         cr.execute("update ng_state_payroll_earnded_upload set state='approved' where id=" + str(upload.id))                
                         if len(exception_list) > 0:
                             with open(TEMP_DIR + '' + 'nonstd_earnded_upload_exceptions_' + str(upload.id) + '.csv', 'w') as csvfile:
-                                fieldnames = ['employee_no', 'description', 'amount','derived_from','error']
+                                fieldnames = ['employee_no', 'description', 'amount','derived_from','number_of_months','error']
                                 if not upload.deduction:
                                     fieldnames = ['employee_no', 'description', 'amount','permanent','relief','income_deduction','error']
                                 writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -6217,10 +6235,10 @@ class ng_state_payroll_payroll(models.Model):
                                     #Pro-rate for retiring employees
                                     #Use hire date and date of birth to calculate retirement date
                                     if emp.payscheme_id.use_dofa:
-                                        retirement_date_dofa = datetime.strptime(emp.hire_date, DEFAULT_SERVER_DATE_FORMAT) + relativedelta(years=emp.payscheme_id.service_years)
+                                        retirement_date_dofa = datetime.strptime(emp.hire_date, DEFAULT_SERVER_DATE_FORMAT) + relativedelta(years=emp.payscheme_id.service_years) - timedelta(days=1)
                                         retirement_date = retirement_date_dofa
                                     if emp.payscheme_id.use_dob and emp.birthday:
-                                        retirement_date_dob = datetime.strptime(emp.birthday, DEFAULT_SERVER_DATE_FORMAT) + relativedelta(years=emp.payscheme_id.retirement_age)
+                                        retirement_date_dob = datetime.strptime(emp.birthday, DEFAULT_SERVER_DATE_FORMAT) + relativedelta(years=emp.payscheme_id.retirement_age) - timedelta(days=1)
                                         retirement_date = retirement_date_dob
                                     if emp.payscheme_id.use_dofa and (emp.payscheme_id.use_dob and retirement_date_dob):
                                         if retirement_date_dofa < retirement_date_dob:
@@ -6240,7 +6258,7 @@ class ng_state_payroll_payroll(models.Model):
                                     item_line_retiring = 'f'
                                     _logger.info('ogo ILR')
                                 if retirement_date and is_active:
-                                    retirement_date=datetime.strptime(emp.hire_date, DEFAULT_SERVER_DATE_FORMAT)
+                                    retirement_date=datetime.strptime(emp.retirement_due_date, DEFAULT_SERVER_DATE_FORMAT)
                                     item_line_retiring = 't'
                                     _logger.info("Retirement Date=%s ogo B- kp modified ret date", retirement_date)
                                     _logger.info("EMP IS RETIRING =%s ", str(emp.id))
@@ -7918,9 +7936,9 @@ class ng_state_payroll_disciplinary(models.Model):
         data = employee_obj.read(
             cr, uid, disciplinary_id[0].employee_id.id, ['state', 'retirement_due_date'], context=context) 
         if data.get('retirement_due_date', False) and data['retirement_due_date'] != '':
-            retirementDate = datetime.strpptime(
+            retirementDate = datetime.strptime(
                 data['retirement_due_date'], DEFAULT_SERVER_DATE_FORMAT)
-            dEffective = datetime.strpptime(
+            dEffective = datetime.strptime(
                 effective_date, DEFAULT_SERVER_DATE_FORMAT)
             if dEffective >= retirementDate:
                 disciplinary_obj.write(cr, uid, disc_id, {'error_msg': 'Effective Date cannot be after Retirement Due Date.'}, context=context)
